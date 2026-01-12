@@ -36,8 +36,10 @@
         <section class="hero"
             style="background: linear-gradient(rgba(15, 44, 89, 0.8), rgba(15, 44, 89, 0.6)), url('assets/hero.png') no-repeat center center/cover; height: 90vh; display: flex; align-items: center; color: white;">
             <div class="container text-center fade-in">
-                <h1 style="color: white; margin-bottom: 1.5rem;">Inspiring Hope for Mothers & Newborns</h1>
-                <p style="font-size: 1.5rem; color: #E0E0E0; max-width: 800px; margin: 0 auto 2.5rem;">
+                <h1 style="color: white; margin-bottom: 1.5rem;" data-cms-key="home_hero_title">Inspiring Hope for
+                    Mothers & Newborns</h1>
+                <p style="font-size: 1.5rem; color: #E0E0E0; max-width: 800px; margin: 0 auto 2.5rem;"
+                    data-cms-key="home_hero_text">
                     Saving maternal and newborn healthcare through integrated clinical practice, education, and research
                     in under-resourced communities.
                 </p>
@@ -48,7 +50,7 @@
         <!-- Video Section -->
         <section class="section-padding" style="padding-top: 3rem; padding-bottom: 3rem;">
             <div class="container fade-in" style="text-align: center;">
-                <video controls autoplay muted loop playsinline
+                <video id="hero-video" controls autoplay muted loop playsinline data-cms-key="home_video_url"
                     style="width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: translateY(-20px); z-index: 10; position: relative; background-color: #000;">
                     <source src="assets/hero-video.mp4" type="video/mp4">
                     Your browser does not support the video tag.

@@ -62,6 +62,49 @@ document.addEventListener('DOMContentLoaded', () => {
     const supabaseKey = 'sb_publishable_9RhuiNWEUwWLbg3phWHYoA_F3RilB8k';
     const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+    // CMS Content Loading
+    async function loadCMSContent() {
+        const cmsElements = document.querySelectorAll('[data-cms-key]');
+        if (cmsElements.length === 0) return;
+
+        try {
+            const { data, error } = await supabase
+                .from('site_content')
+                .select('*');
+
+            if (error) throw error;
+
+            const contentMap = {};
+            data.forEach(item => {
+                contentMap[item.key] = item;
+            });
+
+            cmsElements.forEach(el => {
+                const key = el.getAttribute('data-cms-key');
+                const content = contentMap[key];
+
+                if (content) {
+                    if (content.type === 'video') {
+                        const source = el.querySelector('source');
+                        if (source) {
+                            source.src = content.value;
+                            el.load();
+                        } else {
+                            el.src = content.value;
+                        }
+                    } else {
+                        // For text/html
+                        el.innerHTML = content.value;
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('CMS Error:', error);
+        }
+    }
+
+    loadCMSContent();
+
     // Form Submission
     const signupForm = document.getElementById('signup-form');
     if (signupForm) {
