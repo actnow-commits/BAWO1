@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <header>
         <div class="container">
@@ -31,13 +33,26 @@
 
     <main>
         <!-- Hero Section -->
-        <section class="hero" style="background: linear-gradient(rgba(15, 44, 89, 0.8), rgba(15, 44, 89, 0.6)), url('assets/hero.png') no-repeat center center/cover; height: 90vh; display: flex; align-items: center; color: white;">
+        <section class="hero"
+            style="background: linear-gradient(rgba(15, 44, 89, 0.8), rgba(15, 44, 89, 0.6)), url('assets/hero.png') no-repeat center center/cover; height: 90vh; display: flex; align-items: center; color: white;">
             <div class="container text-center fade-in">
                 <h1 style="color: white; margin-bottom: 1.5rem;">Inspiring Hope for Mothers & Newborns</h1>
                 <p style="font-size: 1.5rem; color: #E0E0E0; max-width: 800px; margin: 0 auto 2.5rem;">
-                    Saving maternal and newborn healthcare through integrated clinical practice, education, and research in under-resourced communities.
+                    Saving maternal and newborn healthcare through integrated clinical practice, education, and research
+                    in under-resourced communities.
                 </p>
                 <a href="partners.html" class="btn btn-primary">Support Our Mission</a>
+            </div>
+        </section>
+
+        <!-- Video Section -->
+        <section class="section-padding" style="padding-top: 3rem; padding-bottom: 3rem;">
+            <div class="container fade-in" style="text-align: center;">
+                <video controls autoplay muted loop playsinline
+                    style="width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: translateY(-20px); z-index: 10; position: relative; background-color: #000;">
+                    <source src="assets/hero-video.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
             </div>
         </section>
 
@@ -46,26 +61,38 @@
             <div class="container">
                 <div class="text-center fade-in" style="margin-bottom: 4rem;">
                     <h2>Our Core Pillars</h2>
-                    <p style="max-width: 600px; margin: 0 auto;">We improve health and well-being through four key strategic areas.</p>
+                    <p style="max-width: 600px; margin: 0 auto;">We improve health and well-being through four key
+                        strategic areas.</p>
                 </div>
                 <div class="grid grid-2 fade-in">
-                    <div class="pillar-card" style="background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center;">
-                        <i class="fas fa-graduation-cap" style="font-size: 3rem; color: var(--accent-teal); margin-bottom: 1.5rem;"></i>
+                    <div class="pillar-card"
+                        style="background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center;">
+                        <i class="fas fa-graduation-cap"
+                            style="font-size: 3rem; color: var(--accent-teal); margin-bottom: 1.5rem;"></i>
                         <h3>Education</h3>
-                        <p>Providing training for community healthcare providers on critical maternal and newborn care practices.</p>
+                        <p>Providing training for community healthcare providers on critical maternal and newborn care
+                            practices.</p>
                     </div>
-                    <div class="pillar-card" style="background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center;">
-                        <i class="fas fa-microscope" style="font-size: 3rem; color: var(--accent-teal); margin-bottom: 1.5rem;"></i>
+                    <div class="pillar-card"
+                        style="background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center;">
+                        <i class="fas fa-microscope"
+                            style="font-size: 3rem; color: var(--accent-teal); margin-bottom: 1.5rem;"></i>
                         <h3>Research</h3>
-                        <p>Conducting vital research to understand and address health disparities in vulnerable populations.</p>
+                        <p>Conducting vital research to understand and address health disparities in vulnerable
+                            populations.</p>
                     </div>
-                    <div class="pillar-card" style="background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center;">
-                        <i class="fas fa-bullhorn" style="font-size: 3rem; color: var(--accent-teal); margin-bottom: 1.5rem;"></i>
+                    <div class="pillar-card"
+                        style="background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center;">
+                        <i class="fas fa-bullhorn"
+                            style="font-size: 3rem; color: var(--accent-teal); margin-bottom: 1.5rem;"></i>
                         <h3>Advocacy</h3>
-                        <p>Championing the rights and health needs of mothers and newborns at local and global levels.</p>
+                        <p>Championing the rights and health needs of mothers and newborns at local and global levels.
+                        </p>
                     </div>
-                    <div class="pillar-card" style="background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center;">
-                        <i class="fas fa-hand-holding-heart" style="font-size: 3rem; color: var(--accent-teal); margin-bottom: 1.5rem;"></i>
+                    <div class="pillar-card"
+                        style="background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center;">
+                        <i class="fas fa-hand-holding-heart"
+                            style="font-size: 3rem; color: var(--accent-teal); margin-bottom: 1.5rem;"></i>
                         <h3>Empowerment</h3>
                         <p>Empowering communities to take charge of their health through partnership and support.</p>
                     </div>
@@ -78,17 +105,64 @@
             <div class="container">
                 <div class="grid grid-2" style="align-items: center;">
                     <div class="fade-in">
-                        <img src="assets/outreach.png" alt="Community Outreach" style="border-radius: var(--border-radius); box-shadow: var(--shadow);">
+                        <img src="assets/outreach-2.jpg" alt="Community Outreach"
+                            style="border-radius: var(--border-radius); box-shadow: var(--shadow);">
                     </div>
                     <div class="fade-in">
                         <h2>Why We Exist</h2>
-                        <p>The BAWO Foundation was created by Dr. Inara A. Omuso, MD, and inspired by Dr. Aye Wilson Omuso, PhD. We are dedicated to providing healthcare services to under-resourced, marginalized, and vulnerable patient populations in the United States and sub-Saharan Africa.</p>
-                        <p>Our mission is rooted in the legacy of Madam Bawo Wilson Omuso, a matriarch defined by generosity, love, and community commitment.</p>
-                        <a href="about.html" class="btn btn-primary" style="margin-top: 1rem;">Learn About Our Legacy</a>
+                        <p>The BAWO Foundation was created by Dr. Inara A. Omuso, MD, and inspired by Dr. Aye Wilson
+                            Omuso, PhD. We are dedicated to providing healthcare services to under-resourced,
+                            marginalized, and vulnerable patient populations in the United States and sub-Saharan
+                            Africa.</p>
+                        <p>Our mission is rooted in the legacy of Madam Bawo Wilson Omuso, a matriarch defined by
+                            generosity, love, and community commitment.</p>
+                        <a href="about.html" class="btn btn-primary" style="margin-top: 1rem;">Learn About Our
+                            Legacy</a>
                     </div>
                 </div>
             </div>
         </section>
+        <!-- Sign Up Section -->
+        <section class="section-padding" style="background-color: #fff;">
+            <div class="container">
+                <div class="text-center fade-in" style="margin-bottom: 3rem;">
+                    <h2>Join Our Community</h2>
+                    <p>Stay updated with our latest news and impact.</p>
+                </div>
+                <div class="fade-in"
+                    style="max-width: 600px; margin: 0 auto; background: #f9f9f9; padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow);">
+                    <form id="signup-form">
+                        <div style="margin-bottom: 1.5rem;">
+                            <label for="name" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Name
+                                <span style="color: red;">*</span></label>
+                            <input type="text" id="name" name="name" required
+                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;">
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <label for="email" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Email
+                                <span style="color: red;">*</span></label>
+                            <input type="email" id="email" name="email" required
+                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;">
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <label for="phone"
+                                style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Phone</label>
+                            <input type="tel" id="phone" name="phone"
+                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;">
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <label for="message"
+                                style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Message</label>
+                            <textarea id="message" name="message" rows="4"
+                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary"
+                            style="width: 100%; border: none; font-size: 1.1rem;">Sign Up</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <footer>
@@ -121,6 +195,8 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
 </body>
+
 </html>

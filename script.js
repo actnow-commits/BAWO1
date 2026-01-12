@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mobileBtn) {
         mobileBtn.addEventListener('click', () => {
             navLinks.classList.toggle('active');
-            mobileBtn.innerHTML = navLinks.classList.contains('active') 
-                ? '<i class="fas fa-times"></i>' 
+            mobileBtn.innerHTML = navLinks.classList.contains('active')
+                ? '<i class="fas fa-times"></i>'
                 : '<i class="fas fa-bars"></i>';
         });
     }
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Active Link Highlighting
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     const links = document.querySelectorAll('.nav-links a');
-    
+
     links.forEach(link => {
         if (link.getAttribute('href') === currentPage) {
             link.classList.add('active');
@@ -39,4 +39,63 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.fade-in').forEach(el => {
         observer.observe(el);
     });
+
+    // Video Upload Preview
+    const videoUpload = document.getElementById('video-upload');
+    const videoPreviewContainer = document.getElementById('video-preview-container');
+    const videoPreview = document.getElementById('video-preview');
+    const videoName = document.getElementById('video-preview-name');
+
+    if (videoUpload) {
+        videoUpload.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const fileURL = URL.createObjectURL(file);
+                videoPreview.src = fileURL;
+                videoPreviewContainer.style.display = 'block';
+                videoName.textContent = `Playing: ${file.name}`;
+            }
+        });
+    }
+    // Supabase Configuration
+    const supabaseUrl = 'https://tijsephkovqailbrwuzt.supabase.co';
+    const supabaseKey = 'sb_publishable_9RhuiNWEUwWLbg3phWHYoA_F3RilB8k';
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    // Form Submission
+    const signupForm = document.getElementById('signup-form');
+    if (signupForm) {
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = signupForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                message: document.getElementById('message').value
+            };
+
+            try {
+                const { data, error } = await supabase
+                    .from('signups')
+                    .insert([formData]);
+
+                if (error) throw error;
+
+                alert('Thank you for signing up! Your details have been saved.');
+                signupForm.reset();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('There was an error saving your details. Please try again.');
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    }
 });
