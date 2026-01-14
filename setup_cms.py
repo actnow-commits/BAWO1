@@ -53,7 +53,7 @@ initial_data = [
     ('home_hero_text', 'Saving maternal and newborn healthcare through integrated clinical practice, education, and research in under-resourced communities.', 'text'),
     ('home_video_url', 'assets/hero-video.mp4', 'video'),
     ('mission_quote', '"To save maternal and newborn healthcare by inspiring hope and contributing to the improved health and well-being of pregnant women and their newborns through integrated clinical practice."', 'text'),
-    ('about_origins_text', 'The BAWO Foundation traces its roots to Madam Bawo Wilson Omuso, the matriarch of the Omuso family and a direct descendant to Chief Kari of Nembe in Bayelsa State, South-South Nigeria.', 'text')
+    ('about_origins_text', 'The BAWO Foundation traces its roots to Madam Bessie (Bawo) Wilson Omuso, the matriarch of the Omuso family and a direct descendant to Chief Kari of Nembe in Bayelsa State, South-South Nigeria.', 'text')
 ]
 
 conn = psycopg2.connect(dsn)
