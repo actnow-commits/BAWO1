@@ -95,7 +95,8 @@ p {
 
 .btn-primary {
     background-color: var(--accent-teal);
-    color: var(--primary-blue);
+    color: #000000;
+    font-weight: 700;
 }
 
 .btn-primary:hover {

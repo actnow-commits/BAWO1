@@ -69,40 +69,55 @@
                             Gallery <i class="fas fa-arrow-right" style="margin-left: 0.5rem;"></i></a>
                     </div>
                     <div class="fade-in">
-                        <img src="assets/hospital_outreach.jpg" alt="Nembe Hospital Outreach"
+                        <img src="assets/nembe-outreach.jpg" alt="Nembe Hospital Outreach"
                             style="border-radius: var(--border-radius); box-shadow: var(--shadow);">
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Ongoing Services -->
+        <!-- Health Goals Section -->
         <section class="section-padding" style="background-color: #f0f7ff;">
             <div class="container">
                 <div class="text-center fade-in" style="margin-bottom: 3rem;">
-                    <h2>Clinical Services</h2>
+                    <h2>Our Maternal & Newborn Health Goals</h2>
                 </div>
-                <div class="grid grid-3">
-                    <div class="fade-in"
-                        style="background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center;">
-                        <i class="fas fa-heartbeat"
-                            style="font-size: 2.5rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
-                        <h3>BP Monitoring</h3>
-                        <p>Community blood pressure monitoring to prevent and manage hypertension.</p>
-                    </div>
-                    <div class="fade-in"
-                        style="background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center;">
-                        <i class="fas fa-baby"
-                            style="font-size: 2.5rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
-                        <h3>Newborn Care</h3>
-                        <p>Essential care services and education for the health of newborns.</p>
-                    </div>
-                    <div class="fade-in"
-                        style="background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center;">
-                        <i class="fas fa-user-nurse"
-                            style="font-size: 2.5rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
-                        <h3>Clinic Access</h3>
-                        <p>Prenatal and postnatal clinic support for expectant and new mothers.</p>
+                <div class="grid grid-1 fade-in" style="max-width: 800px; margin: 0 auto;">
+                    <div
+                        style="background: white; padding: 2.5rem; border-radius: var(--border-radius); box-shadow: var(--shadow);">
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="margin-bottom: 1.5rem; display: flex; align-items: start;">
+                                <i class="fas fa-chart-line"
+                                    style="color: var(--accent-teal); margin-right: 1.25rem; font-size: 1.5rem; margin-top: 0.25rem;"></i>
+                                <span style="font-size: 1.1rem;"><strong>IMPROVE</strong> maternal, fetal, and neonatal
+                                    morbidity and mortality.</span>
+                            </li>
+                            <li style="margin-bottom: 1.5rem; display: flex; align-items: start;">
+                                <i class="fas fa-graduation-cap"
+                                    style="color: var(--accent-teal); margin-right: 1.25rem; font-size: 1.5rem; margin-top: 0.25rem;"></i>
+                                <span style="font-size: 1.1rem;"><strong>EDUCATE</strong> local healthcare providers
+                                    (midwives, birth attendants, physicians, community health workers, and traditional
+                                    birthing attendants).</span>
+                            </li>
+                            <li style="margin-bottom: 1.5rem; display: flex; align-items: start;">
+                                <i class="fas fa-stethoscope"
+                                    style="color: var(--accent-teal); margin-right: 1.25rem; font-size: 1.5rem; margin-top: 0.25rem;"></i>
+                                <span style="font-size: 1.1rem;"><strong>INTRODUCE</strong> and reinforce evidence-based
+                                    management of common birthing complications.</span>
+                            </li>
+                            <li style="margin-bottom: 1.5rem; display: flex; align-items: start;">
+                                <i class="fas fa-box-open"
+                                    style="color: var(--accent-teal); margin-right: 1.25rem; font-size: 1.5rem; margin-top: 0.25rem;"></i>
+                                <span style="font-size: 1.1rem;"><strong>PROVIDE</strong> supplies to perpetuate
+                                    education and improve outcomes.</span>
+                            </li>
+                            <li style="margin-bottom: 0px; display: flex; align-items: start;">
+                                <i class="fas fa-hands-helping"
+                                    style="color: var(--accent-teal); margin-right: 1.25rem; font-size: 1.5rem; margin-top: 0.25rem;"></i>
+                                <span style="font-size: 1.1rem;"><strong>EMPOWER</strong> community healthcare workers
+                                    to be lifelong learners and advocates for maternal and newborn health.</span>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -126,58 +141,35 @@
             </div>
         </section>
 
-        <!-- Video Upload Section -->
-        <section class="section-padding">
-            <div class="container">
-                <div class="text-center fade-in" style="margin-bottom: 3rem;">
-                    <h2>Share Your Story</h2>
-                    <p>Upload videos to share with the community.</p>
-                </div>
-                <div class="text-center fade-in"
-                    style="background: white; padding: 3rem; border-radius: var(--border-radius); box-shadow: var(--shadow); max-width: 600px; margin: 0 auto;">
-                    <i class="fas fa-video"
-                        style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1.5rem;"></i>
-                    <h3 style="margin-bottom: 1.5rem;">Upload Video</h3>
-                    <input type="file" id="video-upload" accept="video/*" style="display: none;">
-                    <label for="video-upload" class="btn btn-primary" style="cursor: pointer;">
-                        <i class="fas fa-cloud-upload-alt" style="margin-right: 0.5rem;"></i> Choose File
-                    </label>
-                    <div id="video-preview-container" style="margin-top: 2rem; display: none;">
-                        <video id="video-preview" controls style="width: 100%; border-radius: 8px;"></video>
-                        <p id="video-name" style="margin-top: 1rem; color: #555;"></p>
-                    </div>
-                </div>
-            </div>
-        </section>
 
-        <!-- Future Project -->
+        <!-- Educational Initiative Section -->
         <section class="section-padding" style="background-color: #E6F4F1;">
             <div class="container">
                 <div class="grid grid-2" style="align-items: center;">
                     <div class="fade-in">
-                        <img src="assets/facility.png" alt="Future Initiative"
+                        <img src="assets/educational-initiative.jpg" alt="Educational Initiative Training Session"
                             style="border-radius: var(--border-radius); box-shadow: var(--shadow);">
                     </div>
                     <div class="fade-in">
                         <span
                             style="background: var(--primary-blue); color: white; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.9rem;">UPCOMING
                             - MARCH 2026</span>
-                        <h2 style="margin-top: 1rem;">Women’s & Newborn Initiative</h2>
-                        <p>A comprehensive program designed to upskill healthcare providers and improve patient outcomes
-                            in critical areas.</p>
+                        <h2 style="margin-top: 1rem;">Educational Initiative</h2>
+                        <p>A focused educational initiative designed to "Train the Trainer" by equipping community
+                            healthcare workers with essential education aimed at enhancing outcomes in critical areas.
+                        </p>
                         <h4 style="margin-top: 1.5rem;">Focus Areas:</h4>
-                        <ul style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                            <li><i class="fas fa-angle-right"
-                                    style="color: var(--accent-teal); margin-right: 0.5rem;"></i> Postpartum Hemorrhage
-                            </li>
-                            <li><i class="fas fa-angle-right"
-                                    style="color: var(--accent-teal); margin-right: 0.5rem;"></i> Preeclampsia</li>
-                            <li><i class="fas fa-angle-right"
-                                    style="color: var(--accent-teal); margin-right: 0.5rem;"></i> Maternal Hypertension
-                            </li>
-                            <li><i class="fas fa-angle-right"
-                                    style="color: var(--accent-teal); margin-right: 0.5rem;"></i> Essential Newborn Care
-                            </li>
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="margin-bottom: 0.5rem;"><i class="fas fa-angle-right"
+                                    style="color: var(--accent-teal); margin-right: 0.5rem;"></i> Postpartum hemorrhage
+                                (excessive bleeding following childbirth)</li>
+                            <li style="margin-bottom: 0.5rem;"><i class="fas fa-angle-right"
+                                    style="color: var(--accent-teal); margin-right: 0.5rem;"></i> Maternal hypertension
+                                (elevated blood pressure associated with parturition, including preeclampsia and
+                                eclampsia)</li>
+                            <li style="margin-bottom: 0.5rem;"><i class="fas fa-angle-right"
+                                    style="color: var(--accent-teal); margin-right: 0.5rem;"></i> Essential Newborn care
+                                (comprising newborn resuscitation)</li>
                         </ul>
                     </div>
                 </div>
