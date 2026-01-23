@@ -40,23 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(el);
     });
 
-    // Video Upload Preview
-    const videoUpload = document.getElementById('video-upload');
-    const videoPreviewContainer = document.getElementById('video-preview-container');
-    const videoPreview = document.getElementById('video-preview');
-    const videoName = document.getElementById('video-preview-name');
-
-    if (videoUpload) {
-        videoUpload.addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (file) {
-                const fileURL = URL.createObjectURL(file);
-                videoPreview.src = fileURL;
-                videoPreviewContainer.style.display = 'block';
-                videoName.textContent = `Playing: ${file.name}`;
-            }
-        });
-    }
     // Supabase Configuration
     const supabaseUrl = 'https://tijsephkovqailbrwuzt.supabase.co';
     const supabaseKey = 'sb_publishable_9RhuiNWEUwWLbg3phWHYoA_F3RilB8k';
@@ -84,18 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const content = contentMap[key];
 
                 if (content) {
-                    if (content.type === 'video') {
-                        const source = el.querySelector('source');
-                        if (source) {
-                            source.src = content.value;
-                            el.load();
-                        } else {
-                            el.src = content.value;
-                        }
-                    } else {
-                        // For text/html
-                        el.innerHTML = content.value;
-                    }
+                    el.innerHTML = content.value;
                 }
             });
         } catch (error) {
