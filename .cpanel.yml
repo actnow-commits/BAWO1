@@ -1,0 +1,14 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/bawofoun/public_html
+    - /bin/cp index.html $DEPLOYPATH
+    - /bin/cp about.html $DEPLOYPATH
+    - /bin/cp projects.html $DEPLOYPATH
+    - /bin/cp donate.html $DEPLOYPATH
+    - /bin/cp partners.html $DEPLOYPATH
+    - /bin/cp admin.html $DEPLOYPATH
+    - /bin/cp style.css $DEPLOYPATH
+    - /bin/cp script.js $DEPLOYPATH
+    - /bin/cp admin.js $DEPLOYPATH
+    - /bin/cp -r assets $DEPLOYPATH

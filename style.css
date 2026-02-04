@@ -197,18 +197,36 @@ footer {
 
 .footer-content {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-columns: 1.5fr 1fr 1fr;
     gap: 4rem;
     margin-bottom: 3rem;
+    align-items: start;
+}
+
+.footer-brand {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2.5rem;
+    border-radius: var(--border-radius);
+    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    max-width: 320px;
 }
 
 .footer-brand h3 {
     color: var(--accent-teal);
     margin-bottom: 1rem;
+    font-size: 1.5rem;
 }
 
 .footer-brand p {
     color: #cbccce;
+    margin-bottom: 0;
+    font-size: 1rem;
+    line-height: 1.4;
 }
 
 .footer-links h4 {
