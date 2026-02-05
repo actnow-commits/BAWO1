@@ -13,11 +13,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Active Link Highlighting
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const path = window.location.pathname;
     const links = document.querySelectorAll('.nav-links a');
 
     links.forEach(link => {
-        if (link.getAttribute('href') === currentPage) {
+        const href = link.getAttribute('href');
+        // Check if path is root and link is root, or if link matches the path
+        if ((path === '/' || path === '/index.html' || path === '') && href === '/') {
+            link.classList.add('active');
+        } else if (href !== '/' && (path === '/' + href || path === href)) {
             link.classList.add('active');
         }
     });

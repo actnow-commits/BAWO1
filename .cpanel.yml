@@ -11,4 +11,5 @@ deployment:
     - /bin/cp style.css $DEPLOYPATH
     - /bin/cp script.js $DEPLOYPATH
     - /bin/cp admin.js $DEPLOYPATH
+    - /bin/cp .htaccess $DEPLOYPATH
     - /bin/cp -r assets $DEPLOYPATH
