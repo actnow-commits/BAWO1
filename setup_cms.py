@@ -34,7 +34,7 @@ commands = [
     BEGIN
         IF NOT EXISTS (
             SELECT FROM pg_catalog.pg_policies 
-            WHERE tablename = 'site_content' AND policyname = 'Enable update for anon users'
+            WHERE tablename = 'site_content' AND policyname = 'Enable update for authenticated users'
         ) THEN
             -- WARNING: This allows anyone to update content. Ideally, we should restrict this to authenticated users.
             -- Since we don't have auth flow fully set up in this script, we'll allow it for now or assume the user will sign in.
@@ -50,8 +50,8 @@ commands = [
 # Initial Content Data
 initial_data = [
     ('home_hero_title', 'Inspiring Hope for Mothers & Newborns', 'text'),
-    ('home_hero_text', 'Saving maternal and newborn healthcare through integrated clinical practice, education, and research in under-resourced communities.', 'text'),
-    ('mission_quote', '"To save maternal and newborn healthcare by inspiring hope and contributing to the improved health and well-being of pregnant women and their newborns through integrated clinical practice."', 'text'),
+    ('home_hero_text', 'Serving maternal and newborn health care through integrated clinical practice, education, and research in under-resourced communities.', 'text'),
+    ('mission_quote', '"To serve maternal and newborn health care by inspiring hope and contributing to the improved health and well-being of pregnant women and their newborns through integrated clinical practice."', 'text'),
     ('about_origins_text', 'The BAWO Foundation traces its roots to Madam Bessie (Bawo) Wilson Omuso, the matriarch of the Omuso family and a direct descendant to Chief Kari of Nembe in Bayelsa State, South-South Nigeria.', 'text')
 ]
 
@@ -65,7 +65,7 @@ try:
         # Insert initial data if not exists
         for key, value, ctype in initial_data:
             cur.execute(
-                "INSERT INTO site_content (key, value, type) VALUES (%s, %s, %s) ON CONFLICT (key) DO NOTHING",
+                "INSERT INTO site_content (key, value, type) VALUES (%s, %s, %s) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value",
                 (key, value, ctype)
             )
             
