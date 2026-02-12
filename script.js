@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const contentMap = {};
             data.forEach(item => {
-                contentMap[item.key] = item;
+                contentMap[item.section_key] = item;
             });
 
             cmsElements.forEach(el => {
@@ -71,7 +71,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 const content = contentMap[key];
 
                 if (content) {
-                    el.innerHTML = content.value;
+                    // Support both legacy 'value' and new structured fields
+                    const bodyText = content.body_text || content.value;
+                    const title = content.title;
+                    const mediaUrl = content.media_url;
+
+                    // If it's an image element, use mediaUrl
+                    if (el.tagName === 'IMG' && mediaUrl) {
+                        el.src = mediaUrl;
+                    } else {
+                        // For text elements, prefer bodyText
+                        el.innerHTML = bodyText;
+                    }
+
+                    // Optional: if there's a title and an element to put it in
+                    const titleEl = el.parentElement.querySelector(`[data-cms-title="${key}"]`);
+                    if (titleEl && title) {
+                        titleEl.innerHTML = title;
+                    }
                 }
             });
         } catch (error) {
@@ -93,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = true;
 
             const formData = {
+                type: 'signup', // New unified structure
                 name: document.getElementById('name').value,
                 email: document.getElementById('email').value,
                 phone: document.getElementById('phone').value,
@@ -101,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 const { data, error } = await supabase
-                    .from('signups')
+                    .from('user_submissions')
                     .insert([formData]);
 
                 if (error) throw error;

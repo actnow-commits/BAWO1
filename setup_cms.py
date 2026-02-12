@@ -7,7 +7,7 @@ dsn = "postgresql://postgres:Revelation$2033Jesus@db.tijsephkovqailbrwuzt.supaba
 commands = [
     """
     CREATE TABLE IF NOT EXISTS site_content (
-        key TEXT PRIMARY KEY,
+        section_key TEXT PRIMARY KEY,
         value TEXT,
         type TEXT
     )
@@ -65,7 +65,7 @@ try:
         # Insert initial data if not exists
         for key, value, ctype in initial_data:
             cur.execute(
-                "INSERT INTO site_content (key, value, type) VALUES (%s, %s, %s) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value",
+                "INSERT INTO site_content (section_key, value, type) VALUES (%s, %s, %s) ON CONFLICT (section_key) DO UPDATE SET value = EXCLUDED.value",
                 (key, value, ctype)
             )
             
