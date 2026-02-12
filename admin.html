@@ -145,15 +145,33 @@
 
         <!-- Dashboard Section -->
         <div id="dashboard-section" class="dashboard">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                <h2>Site Content</h2>
-                <button id="add-item-btn" class="btn btn-primary" style="display: none;">Add New Item</button>
-                <!-- Hidden for now, simplified to editing existing -->
+            <div class="tabs" style="margin-bottom: 2rem; border-bottom: 2px solid #ddd; display: flex; gap: 2rem;">
+                <button class="tab-btn active" onclick="switchTab('content')"
+                    style="background: none; border: none; padding: 1rem 0; font-weight: 600; cursor: pointer; border-bottom: 3px solid var(--accent-teal); color: var(--primary-blue);">Site
+                    Content</button>
+                <button class="tab-btn" onclick="switchTab('submissions')"
+                    style="background: none; border: none; padding: 1rem 0; font-weight: 600; cursor: pointer; color: #666;">View
+                    Submissions</button>
             </div>
 
-            <div id="content-list">
-                <!-- Content items will be loaded here -->
-                <p>Loading content...</p>
+            <!-- Content Tab -->
+            <div id="content-tab">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h2>Site Content</h2>
+                </div>
+                <div id="content-list">
+                    <p>Loading content...</p>
+                </div>
+            </div>
+
+            <!-- Submissions Tab -->
+            <div id="submissions-tab" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h2>User Submissions</h2>
+                </div>
+                <div id="submissions-list">
+                    <p>Loading submissions...</p>
+                </div>
             </div>
         </div>
     </main>
@@ -166,14 +184,50 @@
             <form id="edit-form">
                 <input type="hidden" id="edit-key">
                 <div class="form-group">
-                    <label>Content Value</label>
+                    <label>Title (Optional)</label>
+                    <input type="text" id="edit-title" placeholder="Enter section title">
+                </div>
+                <div class="form-group">
+                    <label>Body Text / Content</label>
                     <textarea id="edit-value" rows="6" required></textarea>
                 </div>
-                <!-- Logic to switch input type based on content type will be in JS -->
+                <div class="form-group">
+                    <label>Update Image / Media</label>
+                    <input type="file" id="edit-image" accept="image/*">
+                    <small style="color: #666">Leave empty to keep current image.</small>
+                </div>
                 <button type="submit" class="btn btn-primary">Save Changes</button>
             </form>
         </div>
     </div>
+
+    <script>
+        function switchTab(tab) {
+            const contentTab = document.getElementById('content-tab');
+            const submissionsTab = document.getElementById('submissions-tab');
+            const tabs = document.querySelectorAll('.tab-btn');
+
+            if (tab === 'content') {
+                contentTab.style.display = 'block';
+                submissionsTab.style.display = 'none';
+                tabs[0].classList.add('active');
+                tabs[0].style.borderBottom = '3px solid var(--accent-teal)';
+                tabs[0].style.color = 'var(--primary-blue)';
+                tabs[1].classList.remove('active');
+                tabs[1].style.borderBottom = 'none';
+                tabs[1].style.color = '#666';
+            } else {
+                contentTab.style.display = 'none';
+                submissionsTab.style.display = 'block';
+                tabs[1].classList.add('active');
+                tabs[1].style.borderBottom = '3px solid var(--accent-teal)';
+                tabs[1].style.color = 'var(--primary-blue)';
+                tabs[0].classList.remove('active');
+                tabs[0].style.borderBottom = 'none';
+                tabs[0].style.color = '#666';
+            }
+        }
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="admin.js"></script>

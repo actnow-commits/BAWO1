@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Supabase Configuration ──
     const supabaseUrl = 'https://tijsephkovqailbrwuzt.supabase.co';
-    const supabaseKey = 'sb_publishable_9RhuiNWEUwWLbg3phWHYoA_F3RilB8k';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpanNlcGhrb3ZxYWlsYnJ3dXp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyNDA1ODAsImV4cCI6MjA4MzgxNjU4MH0.OUiJIvkMfdTtUvyrgoRKfc4tPZV55F7NTFyNKm8L1rk';
     const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
     // ═══════════════════════════════════════════════════════

@@ -3,9 +3,20 @@
 //  Manages: Auth, Content CMS, Media Uploads, Activity Feed
 // ═══════════════════════════════════════════════════════
 
+// ── Supabase Init (wrapped to prevent script crash) ──
+let sb = null;
 const supabaseUrl = 'https://tijsephkovqailbrwuzt.supabase.co';
-const supabaseKey = 'sb_publishable_9RhuiNWEUwWLbg3phWHYoA_F3RilB8k';
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpanNlcGhrb3ZxYWlsYnJ3dXp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyNDA1ODAsImV4cCI6MjA4MzgxNjU4MH0.OUiJIvkMfdTtUvyrgoRKfc4tPZV55F7NTFyNKm8L1rk';
+
+try {
+    if (window.supabase && typeof window.supabase.createClient === 'function') {
+        sb = window.supabase.createClient(supabaseUrl, supabaseKey);
+    } else {
+        console.warn('Supabase library not found. Dashboard will run in offline mode.');
+    }
+} catch (err) {
+    console.warn('Supabase init failed:', err.message, '— Dashboard will run in offline mode.');
+}
 
 // ── DOM References ──
 const loginSection = document.getElementById('login-section');
@@ -25,80 +36,122 @@ let currentUser = null;
 let liveFeed = { donations: [], signups: [], comments: [] };
 
 // ═══════════════════════════════════════════════════════
+//  6. TAB NAVIGATION  (registered FIRST — no dependencies)
+// ═══════════════════════════════════════════════════════
+
+(function initTabs() {
+    const tabNav = document.getElementById('tab-nav');
+    if (!tabNav) return;
+
+    tabNav.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-tab]');
+        if (!btn) return;
+
+        // Update button states
+        tabNav.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Show correct panel
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById(`panel-${btn.dataset.tab}`);
+        if (targetPanel) targetPanel.classList.add('active');
+    });
+})();
+
+// ═══════════════════════════════════════════════════════
 //  1. AUTHENTICATION
 // ═══════════════════════════════════════════════════════
 
-supabase.auth.onAuthStateChange((event, session) => {
-    if (session) {
-        currentUser = session.user;
-        showDashboard();
-    } else {
-        currentUser = null;
-        showLogin();
+if (sb) {
+    try {
+        sb.auth.onAuthStateChange((event, session) => {
+            if (session) {
+                currentUser = session.user;
+                showDashboard();
+            } else {
+                currentUser = null;
+                showLogin();
+            }
+        });
+    } catch (err) {
+        console.warn('Auth listener failed:', err.message);
     }
-});
+}
 
 function showLogin() {
-    loginSection.style.display = 'flex';
-    dashSection.style.display = 'none';
-    logoutBtn.style.display = 'none';
-    userBadge.style.display = 'none';
+    if (loginSection) loginSection.style.display = 'flex';
+    if (dashSection) dashSection.style.display = 'none';
+    if (logoutBtn) logoutBtn.style.display = 'none';
+    if (userBadge) userBadge.style.display = 'none';
 }
 
 function showDashboard() {
-    loginSection.style.display = 'none';
-    dashSection.classList.add('active');
-    dashSection.style.display = 'block';
-    logoutBtn.style.display = 'inline-flex';
-    userBadge.style.display = 'inline-flex';
-    if (currentUser) {
-        userBadge.innerHTML = `<i class="fas fa-user"></i> ${currentUser.email.split('@')[0]}`;
+    if (loginSection) loginSection.style.display = 'none';
+    if (dashSection) {
+        dashSection.classList.add('active');
+        dashSection.style.display = 'block';
+    }
+    if (logoutBtn) logoutBtn.style.display = 'inline-flex';
+    if (userBadge) {
+        userBadge.style.display = 'inline-flex';
+        if (currentUser) {
+            userBadge.innerHTML = `<i class="fas fa-user"></i> ${currentUser.email.split('@')[0]}`;
+        }
     }
     loadDashboardData();
 }
 
-loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    const btn = loginForm.querySelector('button');
-    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Signing in…';
-    btn.disabled = true;
+if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!sb) {
+            showToast('Database connection unavailable. Please check configuration.', 'error');
+            return;
+        }
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        const btn = loginForm.querySelector('button');
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Signing in…';
+        btn.disabled = true;
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await sb.auth.signInWithPassword({ email, password });
 
-    btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
-    btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+        btn.disabled = false;
 
-    if (error) {
-        showToast('Invalid credentials. Please try again.', 'error');
-    }
-});
+        if (error) {
+            showToast('Invalid credentials. Please try again.', 'error');
+        }
+    });
+}
 
-logoutBtn.addEventListener('click', async () => {
-    await supabase.auth.signOut();
-});
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+        if (sb) await sb.auth.signOut();
+    });
+}
 
 // ═══════════════════════════════════════════════════════
 //  2. CONTENT & MEDIA HANDLER (handleSiteUpdate)
 // ═══════════════════════════════════════════════════════
 
 async function handleSiteUpdate(sectionKey, title, text, file) {
+    if (!sb) throw new Error('Database not connected');
     let mediaUrl = null;
 
     if (file) {
         const fileName = `${sectionKey}-${Date.now()}`;
-        const { data: uploadData, error: uploadErr } = await supabase.storage
+        const { data: uploadData, error: uploadErr } = await sb.storage
             .from('site-media')
             .upload(fileName, file);
 
         if (uploadErr) throw uploadErr;
 
-        const { data } = supabase.storage.from('site-media').getPublicUrl(fileName);
+        const { data } = sb.storage.from('site-media').getPublicUrl(fileName);
         mediaUrl = data.publicUrl;
     }
 
-    const { error } = await supabase
+    const { error } = await sb
         .from('site_content')
         .upsert({
             section_key: sectionKey,
@@ -116,7 +169,9 @@ async function handleSiteUpdate(sectionKey, title, text, file) {
 // ═══════════════════════════════════════════════════════
 
 async function getLiveFeed() {
-    const { data, error } = await supabase
+    if (!sb) return { donations: [], signups: [], comments: [] };
+
+    const { data, error } = await sb
         .from('user_submissions')
         .select('*')
         .order('created_at', { ascending: false });
@@ -138,14 +193,24 @@ async function getLiveFeed() {
 // ═══════════════════════════════════════════════════════
 
 window.loadDashboardData = async function () {
-    await Promise.all([loadContentGrid(), loadActivityFeed()]);
+    try {
+        await Promise.all([loadContentGrid(), loadActivityFeed()]);
+    } catch (err) {
+        console.warn('Dashboard data load failed:', err.message);
+    }
 };
 
 // ── Load Content Grid ──
 async function loadContentGrid() {
+    if (!sb) {
+        contentGrid.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>No content published yet.</p></div>';
+        if (document.getElementById('stat-content')) document.getElementById('stat-content').textContent = '0';
+        return;
+    }
+
     contentGrid.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading content…</p></div>';
 
-    const { data, error } = await supabase
+    const { data, error } = await sb
         .from('site_content')
         .select('*')
         .order('section_key');
@@ -174,7 +239,8 @@ async function loadContentGrid() {
 
 // ── Load item into CMS editor on click ──
 window.loadIntoEditor = async function (sectionKey) {
-    const { data } = await supabase.from('site_content').select('*').eq('section_key', sectionKey).single();
+    if (!sb) return;
+    const { data } = await sb.from('site_content').select('*').eq('section_key', sectionKey).single();
     if (data) {
         document.getElementById('cms-section').value = data.section_key;
         document.getElementById('cms-title').value = data.title || '';
@@ -274,7 +340,8 @@ function renderComments(items) {
 
 // ── Toggle comment approval ──
 window.toggleApprove = async function (id, approved) {
-    const { error } = await supabase
+    if (!sb) return;
+    const { error } = await sb
         .from('user_submissions')
         .update({ metadata: { approved } })
         .eq('id', id);
@@ -290,67 +357,52 @@ window.toggleApprove = async function (id, approved) {
 //  5. CMS FORM HANDLER
 // ═══════════════════════════════════════════════════════
 
-cmsForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const sectionKey = document.getElementById('cms-section').value;
-    const title = document.getElementById('cms-title').value;
-    const body = document.getElementById('cms-body').value;
-    const file = fileInput.files[0];
+if (cmsForm) {
+    cmsForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const sectionKey = document.getElementById('cms-section').value;
+        const title = document.getElementById('cms-title').value;
+        const body = document.getElementById('cms-body').value;
+        const file = fileInput.files[0];
 
-    if (!sectionKey) {
-        showToast('Please select a site section first.', 'error');
-        return;
-    }
-    if (!body.trim()) {
-        showToast('Body text cannot be empty.', 'error');
-        return;
-    }
+        if (!sectionKey) {
+            showToast('Please select a site section first.', 'error');
+            return;
+        }
+        if (!body.trim()) {
+            showToast('Body text cannot be empty.', 'error');
+            return;
+        }
 
-    publishBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Publishing…';
-    publishBtn.disabled = true;
+        publishBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Publishing…';
+        publishBtn.disabled = true;
 
-    try {
-        const { error } = await handleSiteUpdate(sectionKey, title, body, file);
-        if (error) throw error;
+        try {
+            const { error } = await handleSiteUpdate(sectionKey, title, body, file);
+            if (error) throw error;
 
-        showToast(`"${formatKey(sectionKey)}" is now live!`, 'success');
-        cmsForm.reset();
-        fileNameEl.textContent = '';
-        await loadContentGrid();
-    } catch (err) {
-        showToast('Publish failed: ' + err.message, 'error');
-    } finally {
-        publishBtn.innerHTML = '<i class="fas fa-rocket"></i> Publish';
-        publishBtn.disabled = false;
-    }
-});
+            showToast(`"${formatKey(sectionKey)}" is now live!`, 'success');
+            cmsForm.reset();
+            fileNameEl.textContent = '';
+            await loadContentGrid();
+        } catch (err) {
+            showToast('Publish failed: ' + err.message, 'error');
+        } finally {
+            publishBtn.innerHTML = '<i class="fas fa-rocket"></i> Publish';
+            publishBtn.disabled = false;
+        }
+    });
 
-// File name preview
-fileInput.addEventListener('change', () => {
-    fileNameEl.textContent = fileInput.files[0] ? fileInput.files[0].name : '';
-});
+    // File name preview
+    fileInput.addEventListener('change', () => {
+        fileNameEl.textContent = fileInput.files[0] ? fileInput.files[0].name : '';
+    });
 
-// CMS form reset clears file name
-cmsForm.addEventListener('reset', () => {
-    setTimeout(() => { fileNameEl.textContent = ''; }, 0);
-});
-
-// ═══════════════════════════════════════════════════════
-//  6. TAB NAVIGATION
-// ═══════════════════════════════════════════════════════
-
-document.getElementById('tab-nav').addEventListener('click', (e) => {
-    const btn = e.target.closest('button[data-tab]');
-    if (!btn) return;
-
-    // Update button states
-    document.querySelectorAll('#tab-nav button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    // Show correct panel
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    document.getElementById(`panel-${btn.dataset.tab}`).classList.add('active');
-});
+    // CMS form reset clears file name
+    cmsForm.addEventListener('reset', () => {
+        setTimeout(() => { fileNameEl.textContent = ''; }, 0);
+    });
+}
 
 // ═══════════════════════════════════════════════════════
 //  7. UTILITIES
@@ -395,6 +447,7 @@ function timeAgo(dateStr) {
 }
 
 function showToast(message, type = 'success') {
+    if (!toastEl) return;
     const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
     toastEl.className = `toast ${type}`;
     toastEl.innerHTML = `<i class="fas ${icon}" style="color: ${type === 'success' ? 'var(--db-green)' : 'var(--db-red)'}"></i><span class="toast-msg">${message}</span>`;
