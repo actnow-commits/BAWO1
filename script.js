@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Mobile Menu Toggle
+    // ── Mobile Menu Toggle ──
     const mobileBtn = document.querySelector('.mobile-menu-btn');
     const navLinks = document.querySelector('.nav-links');
 
@@ -12,13 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Active Link Highlighting
+    // ── Active Link Highlighting ──
     const path = window.location.pathname;
     const links = document.querySelectorAll('.nav-links a');
 
     links.forEach(link => {
         const href = link.getAttribute('href');
-        // Check if path is root and link is root, or if link matches the path
         if ((path === '/' || path === '/index.html' || path === '') && href === '/') {
             link.classList.add('active');
         } else if (href !== '/' && (path === '/' + href || path === href)) {
@@ -26,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Scroll Animations
+    // ── Scroll Animations ──
     const observerOptions = {
         threshold: 0.1,
         rootMargin: "0px 0px -50px 0px"
@@ -44,12 +43,17 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(el);
     });
 
-    // Supabase Configuration
+    // ── Supabase Configuration ──
     const supabaseUrl = 'https://tijsephkovqailbrwuzt.supabase.co';
     const supabaseKey = 'sb_publishable_9RhuiNWEUwWLbg3phWHYoA_F3RilB8k';
     const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    // CMS Content Loading
+    // ═══════════════════════════════════════════════════════
+    //  DYNAMIC FRONTEND HOOK
+    //  Fetches latest content from site_content and replaces
+    //  all [data-cms-key] placeholders on load.
+    // ═══════════════════════════════════════════════════════
+
     async function loadCMSContent() {
         const cmsElements = document.querySelectorAll('[data-cms-key]');
         if (cmsElements.length === 0) return;
@@ -60,7 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 .select('*');
 
             if (error) throw error;
+            if (!data || data.length === 0) return;
 
+            // Build map: section_key -> content row
             const contentMap = {};
             data.forEach(item => {
                 contentMap[item.section_key] = item;
@@ -70,35 +76,58 @@ document.addEventListener('DOMContentLoaded', () => {
                 const key = el.getAttribute('data-cms-key');
                 const content = contentMap[key];
 
-                if (content) {
-                    // Support both legacy 'value' and new structured fields
-                    const bodyText = content.body_text || content.value;
-                    const title = content.title;
-                    const mediaUrl = content.media_url;
+                if (!content) return;
 
-                    // If it's an image element, use mediaUrl
-                    if (el.tagName === 'IMG' && mediaUrl) {
-                        el.src = mediaUrl;
+                // Resolve the best text value (structured first, legacy fallback)
+                const bodyText = content.body_text || content.value;
+                const title = content.title;
+                const mediaUrl = content.media_url;
+
+                // ── Image elements: swap src ──
+                if (el.tagName === 'IMG' && mediaUrl) {
+                    el.src = mediaUrl;
+                    if (title) el.alt = title;
+                    return;
+                }
+
+                // ── Video elements: swap src ──
+                if (el.tagName === 'VIDEO' && mediaUrl) {
+                    let sourceEl = el.querySelector('source');
+                    if (sourceEl) {
+                        sourceEl.src = mediaUrl;
                     } else {
-                        // For text elements, prefer bodyText
-                        el.innerHTML = bodyText;
+                        el.src = mediaUrl;
                     }
+                    el.load();
+                    return;
+                }
 
-                    // Optional: if there's a title and an element to put it in
-                    const titleEl = el.parentElement.querySelector(`[data-cms-title="${key}"]`);
-                    if (titleEl && title) {
+                // ── Text elements: inject body text ──
+                if (bodyText) {
+                    el.innerHTML = bodyText;
+                }
+
+                // ── Title injection: look for sibling/parent [data-cms-title] ──
+                if (title) {
+                    const titleEl = el.closest('[data-cms-key]')?.parentElement?.querySelector(`[data-cms-title="${key}"]`)
+                        || document.querySelector(`[data-cms-title="${key}"]`);
+                    if (titleEl) {
                         titleEl.innerHTML = title;
                     }
                 }
             });
+
         } catch (error) {
-            console.error('CMS Error:', error);
+            console.error('CMS Load Error:', error.message || error);
         }
     }
 
     loadCMSContent();
 
-    // Form Submission
+    // ═══════════════════════════════════════════════════════
+    //  FORM SUBMISSION → user_submissions
+    // ═══════════════════════════════════════════════════════
+
     const signupForm = document.getElementById('signup-form');
     if (signupForm) {
         signupForm.addEventListener('submit', async (e) => {
@@ -110,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = true;
 
             const formData = {
-                type: 'signup', // New unified structure
+                type: 'signup',
                 name: document.getElementById('name').value,
                 email: document.getElementById('email').value,
                 phone: document.getElementById('phone').value,
@@ -118,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             try {
-                const { data, error } = await supabase
+                const { error } = await supabase
                     .from('user_submissions')
                     .insert([formData]);
 
@@ -127,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Thank you for signing up! Your details have been saved.');
                 signupForm.reset();
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Form Error:', error);
                 alert('There was an error saving your details. Please try again.');
             } finally {
                 submitBtn.textContent = originalText;
