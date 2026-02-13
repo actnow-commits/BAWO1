@@ -35,7 +35,7 @@
 
     <main>
         <!-- Hero Section -->
-        <section class="hero"
+        <section class="hero" data-cms-key="home_hero_bg"
             style="background: linear-gradient(rgba(15, 44, 89, 0.9), rgba(15, 44, 89, 0.7)), url('assets/hero.png') no-repeat center center/cover; min-height: 80vh; display: flex; align-items: center; color: white; padding: 4rem 0;">
             <div class="container">
                 <div class="grid grid-2" style="align-items: center; text-align: left;">
@@ -51,20 +51,22 @@
                         <a href="donate" class="btn btn-primary">Support Our Mission</a>
                     </div>
                     <div class="fade-in">
-                        <div
+                        <div data-cms-key="home_why_exist_card"
                             style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 2rem; border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.2); max-width: 500px;">
-                            <h2 style="color: var(--accent-teal); font-size: 1.75rem; margin-bottom: 1rem;">Why We Exist
-                            </h2>
-                            <p style="font-size: 1rem; color: #F3F4F6; margin-bottom: 1rem; line-height: 1.6;">The BAWO
+                            <h2 style="color: var(--accent-teal); font-size: 1.75rem; margin-bottom: 1rem;"
+                                data-cms-key="home_why_exist_title">Why We Exist</h2>
+                            <p style="font-size: 1rem; color: #F3F4F6; margin-bottom: 1rem; line-height: 1.6;"
+                                data-cms-key="home_why_exist_text_1">The BAWO
                                 Foundation was created by Dr. Inara Omuso, MD, FACOG, and inspired by Dr. Aye Wilson
                                 Omuso,
                                 PhD. We are dedicated to providing health care services to under-resourced,
                                 marginalized,
                                 and vulnerable patient populations in the United States and sub-Saharan Africa.</p>
-                            <p style="font-size: 1rem; color: #F3F4F6; margin-bottom: 1.5rem; line-height: 1.6;">Our
+                            <p style="font-size: 1rem; color: #F3F4F6; margin-bottom: 1.5rem; line-height: 1.6;"
+                                data-cms-key="home_why_exist_text_2">Our
                                 mission is rooted in the legacy of <strong>Madam Bessie (Bawo) Wilson Omuso</strong>, a
                                 matriarch defined by generosity, love, and community commitment.</p>
-                            <a href="about"
+                            <a href="about.html"
                                 style="color: var(--accent-teal); font-weight: 700; font-size: 1rem; display: inline-flex; align-items: center;">Learn
                                 About Our Legacy <i class="fas fa-arrow-right" style="margin-left: 0.75rem;"></i></a>
                         </div>
@@ -83,21 +85,21 @@
                         strategic areas.</p>
                 </div>
                 <div class="grid grid-2 fade-in">
-                    <div class="pillar-card"
+                    <div class="pillar-card" data-cms-key="pillar_education"
                         style="background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center;">
                         <i class="fas fa-graduation-cap"
                             style="font-size: 3rem; color: var(--accent-teal); margin-bottom: 1.5rem;"></i>
                         <h3>Education</h3>
                         <p>Specialized clinical training for safer deliveries and newborn care.</p>
                     </div>
-                    <div class="pillar-card"
+                    <div class="pillar-card" data-cms-key="pillar_research"
                         style="background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center;">
                         <i class="fas fa-microscope"
                             style="font-size: 3rem; color: var(--accent-teal); margin-bottom: 1.5rem;"></i>
                         <h3>Research</h3>
                         <p>Addressing health disparities in maternal and neonatal outcomes.</p>
                     </div>
-                    <div class="pillar-card"
+                    <div class="pillar-card" data-cms-key="pillar_advocacy"
                         style="background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center;">
                         <i class="fas fa-bullhorn"
                             style="font-size: 3rem; color: var(--accent-teal); margin-bottom: 1.5rem;"></i>
@@ -105,7 +107,7 @@
                         <p>Championing policy for pregnant women and newborns.
                         </p>
                     </div>
-                    <div class="pillar-card"
+                    <div class="pillar-card" data-cms-key="pillar_empowerment"
                         style="background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center;">
                         <i class="fas fa-hand-holding-heart"
                             style="font-size: 3rem; color: var(--accent-teal); margin-bottom: 1.5rem;"></i>
@@ -164,8 +166,10 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
-                    <img src="assets/logo.png" alt="BAWO Foundation Logo" style="height: 80px; margin-bottom: 1rem;">
-                    <h3>BAWO Foundation</h3>
+                    <a href="index.html" class="footer-logo-link">
+                        <img src="assets/logo.png" alt="BAWO Foundation Logo">
+                        <h3>BAWO Foundation</h3>
+                    </a>
                     <p>Serving maternal and newborn health care by inspiring hope.</p>
                 </div>
                 <div class="footer-links">

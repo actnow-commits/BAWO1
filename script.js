@@ -59,14 +59,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cmsElements.length === 0) return;
 
         try {
+            // Check for admin session to enable "Edit Mode"
+            const { data: { session } } = await supabase.auth.getSession();
+            const isAdmin = !!session;
+
             const { data, error } = await supabase
                 .from('site_content')
                 .select('*');
 
             if (error) throw error;
-            if (!data || data.length === 0) return;
+            if (!data) return;
 
-            // Build map: section_key -> content row
             const contentMap = {};
             data.forEach(item => {
                 contentMap[item.section_key] = item;
@@ -76,9 +79,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 const key = el.getAttribute('data-cms-key');
                 const content = contentMap[key];
 
+                // ── Admin UI Overlay ──
+                if (isAdmin) {
+                    el.style.cursor = 'pointer';
+                    el.title = `Click to edit: ${key}`;
+                    el.classList.add('cms-admin-editable');
+                    el.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.location.href = `dashboard.html?edit=${key}`;
+                    });
+                }
+
                 if (!content) return;
 
-                // Resolve the best text value (structured first, legacy fallback)
                 const bodyText = content.body_text || content.value;
                 const title = content.title;
                 const mediaUrl = content.media_url;
@@ -102,12 +116,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
+                // ── Background images (divs/sections) ──
+                if (mediaUrl && (el.tagName === 'SECTION' || el.tagName === 'DIV')) {
+                    const currentBg = window.getComputedStyle(el).backgroundImage;
+                    if (currentBg !== 'none') {
+                        // Preserve gradients if they exist
+                        if (currentBg.includes('gradient')) {
+                            const gradients = currentBg.split(', url')[0];
+                            el.style.backgroundImage = `${gradients}, url('${mediaUrl}')`;
+                        } else {
+                            el.style.backgroundImage = `url('${mediaUrl}')`;
+                        }
+                    }
+                }
+
                 // ── Text elements: inject body text ──
                 if (bodyText) {
                     el.innerHTML = bodyText;
                 }
 
-                // ── Title injection: look for sibling/parent [data-cms-title] ──
                 if (title) {
                     const titleEl = el.closest('[data-cms-key]')?.parentElement?.querySelector(`[data-cms-title="${key}"]`)
                         || document.querySelector(`[data-cms-title="${key}"]`);

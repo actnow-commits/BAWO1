@@ -195,50 +195,70 @@ async function getLiveFeed() {
 window.loadDashboardData = async function () {
     try {
         await Promise.all([loadContentGrid(), loadActivityFeed()]);
+
+        // Check for deep-link from live site
+        const urlParams = new URLSearchParams(window.location.search);
+        const editKey = urlParams.get('edit');
+        if (editKey) {
+            // Wait a tiny bit for the grid to render before loading into editor
+            setTimeout(() => loadIntoEditor(editKey), 300);
+        }
     } catch (err) {
         console.warn('Dashboard data load failed:', err.message);
     }
 };
 
 // ── Load Content Grid ──
-async function loadContentGrid() {
-    if (!sb) {
-        contentGrid.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>No content published yet.</p></div>';
-        if (document.getElementById('stat-content')) document.getElementById('stat-content').textContent = '0';
-        return;
+// ── Load Content Grid ──
+async function loadContentGrid(filterKey = null) {
+    if (!sb || !contentGrid) return;
+
+    let query = sb.from('site_content').select('*');
+    if (filterKey) {
+        query = query.eq('section_key', filterKey);
     }
 
-    contentGrid.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading content…</p></div>';
-
-    const { data, error } = await sb
-        .from('site_content')
-        .select('*')
-        .order('section_key');
-
+    const { data, error } = await query;
     if (error) {
-        contentGrid.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Error: ${error.message}</p></div>`;
+        contentGrid.innerHTML = `<div class="empty-state">Error loading content: ${error.message}</div>`;
         return;
     }
 
-    document.getElementById('stat-content').textContent = data ? data.length : 0;
+    // Update stat if applicable
+    if (document.getElementById('stat-content')) {
+        document.getElementById('stat-content').textContent = data ? data.length : 0;
+    }
 
     if (!data || data.length === 0) {
-        contentGrid.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>No content published yet. Use the form above to add your first section.</p></div>';
+        contentGrid.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-magic"></i>
+                <p>${filterKey ? 'This section hasn\'t been published yet. Use the editor above to create it!' : 'No content published yet.'}</p>
+                ${filterKey ? '<button class="btn-dash btn-outline" style="margin-top: 1rem" onclick="loadContentGrid()">View All Published</button>' : ''}
+            </div>`;
         return;
     }
 
-    contentGrid.innerHTML = data.map(item => `
-        <div class="content-card" onclick="loadIntoEditor('${item.section_key}')">
-            <div class="cc-key">${item.section_key}</div>
-            <h4>${item.title || formatKey(item.section_key)}</h4>
-            <div class="cc-preview">${stripHtml(item.body_text || item.value || '')}</div>
-            ${item.media_url ? '<div class="cc-media-tag"><i class="fas fa-image"></i> Has Media</div>' : ''}
+    contentGrid.innerHTML = (filterKey ? '<div style="grid-column: 1/-1; display:flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;"><small style="color:var(--db-accent); font-weight:700;">FILTERED VIEW</small> <button class="btn-dash btn-outline" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="loadContentGrid()">Show All</button></div>' : '') + data.map(item => `
+        <div class="content-card ${filterKey === item.section_key ? 'highlighted' : ''}" onclick="loadIntoEditor('${item.section_key}')">
+            ${item.media_url ? `
+                <div class="cc-media-preview">
+                    ${item.media_url.match(/\.(mp4|webm|ogg)$/i)
+                ? `<div class="cc-video-placeholder"><i class="fas fa-video"></i></div>`
+                : `<img src="${item.media_url}" alt="Preview">`}
+                </div>
+            ` : ''}
+            <div class="cc-info">
+                <div class="cc-key">${item.section_key}</div>
+                <h4>${item.title || formatKey(item.section_key)}</h4>
+                <div class="cc-preview">${stripHtml(item.body_text || item.value || '')}</div>
+            </div>
         </div>
     `).join('');
 }
 
-// ── Load item into CMS editor on click ──
-window.loadIntoEditor = async function (sectionKey) {
+// ── Load item into CMS editor ──
+window.loadIntoEditor = async function (sectionKey, shouldScroll = true) {
     if (!sb) return;
     const { data } = await sb.from('site_content').select('*').eq('section_key', sectionKey).single();
     if (data) {
@@ -246,9 +266,16 @@ window.loadIntoEditor = async function (sectionKey) {
         document.getElementById('cms-title').value = data.title || '';
         document.getElementById('cms-body').value = data.body_text || data.value || '';
         fileNameEl.textContent = data.media_url ? 'Current media attached' : '';
-        // Scroll to form
-        document.querySelector('.cms-editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        showToast('Content loaded into editor. Make changes and hit Publish.', 'success');
+
+        if (shouldScroll) {
+            document.querySelector('.cms-editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    } else {
+        // Clear if not found (new section selected or not in DB)
+        document.getElementById('cms-section').value = sectionKey;
+        document.getElementById('cms-title').value = '';
+        document.getElementById('cms-body').value = '';
+        fileNameEl.textContent = '';
     }
 };
 
@@ -257,14 +284,14 @@ async function loadActivityFeed() {
     liveFeed = await getLiveFeed();
 
     // Update stat cards
-    document.getElementById('stat-donations').textContent = liveFeed.donations.length;
-    document.getElementById('stat-signups').textContent = liveFeed.signups.length;
-    document.getElementById('stat-comments').textContent = liveFeed.comments.length;
+    if (document.getElementById('stat-donations')) document.getElementById('stat-donations').textContent = liveFeed.donations.length;
+    if (document.getElementById('stat-signups')) document.getElementById('stat-signups').textContent = liveFeed.signups.length;
+    if (document.getElementById('stat-comments')) document.getElementById('stat-comments').textContent = liveFeed.comments.length;
 
     // Update tab badges
-    document.getElementById('donation-count').textContent = liveFeed.donations.length;
-    document.getElementById('signup-count').textContent = liveFeed.signups.length;
-    document.getElementById('comment-count').textContent = liveFeed.comments.length;
+    if (document.getElementById('donation-count')) document.getElementById('donation-count').textContent = liveFeed.donations.length;
+    if (document.getElementById('signup-count')) document.getElementById('signup-count').textContent = liveFeed.signups.length;
+    if (document.getElementById('comment-count')) document.getElementById('comment-count').textContent = liveFeed.comments.length;
 
     // Render each feed
     renderDonations(liveFeed.donations);
@@ -274,8 +301,9 @@ async function loadActivityFeed() {
 
 function renderDonations(items) {
     const el = document.getElementById('donations-feed');
+    if (!el) return;
     if (items.length === 0) {
-        el.innerHTML = '<div class="empty-state"><i class="fas fa-hand-holding-heart"></i><p>No donations logged yet. Donorbox handles primary processing.</p></div>';
+        el.innerHTML = '<div class="empty-state"><i class="fas fa-hand-holding-heart"></i><p>No donations logged yet.</p></div>';
         return;
     }
     el.innerHTML = items.map(d => `
@@ -295,8 +323,9 @@ function renderDonations(items) {
 
 function renderSignups(items) {
     const el = document.getElementById('signups-feed');
+    if (!el) return;
     if (items.length === 0) {
-        el.innerHTML = '<div class="empty-state"><i class="fas fa-user-friends"></i><p>No signups yet. They\'ll appear here when someone fills out the form.</p></div>';
+        el.innerHTML = '<div class="empty-state"><i class="fas fa-user-friends"></i><p>No signups yet.</p></div>';
         return;
     }
     el.innerHTML = items.map(s => `
@@ -306,8 +335,7 @@ function renderSignups(items) {
             </div>
             <div class="feed-body">
                 <div class="feed-name">${s.name || 'Unknown'}</div>
-                <div class="feed-detail"><i class="fas fa-envelope" style="margin-right:0.3rem;"></i> ${s.email || 'N/A'}${s.phone ? ` · <i class="fas fa-phone" style="margin-left:0.5rem;margin-right:0.3rem;"></i>${s.phone}` : ''}</div>
-                ${s.message ? `<div class="feed-detail" style="margin-top:0.3rem; font-style:italic;">"${truncate(s.message, 100)}"</div>` : ''}
+                <div class="feed-detail"><i class="fas fa-envelope"></i> ${s.email || 'N/A'}</div>
                 <div class="feed-time">${timeAgo(s.created_at)}</div>
             </div>
         </div>
@@ -316,6 +344,7 @@ function renderSignups(items) {
 
 function renderComments(items) {
     const el = document.getElementById('comments-feed');
+    if (!el) return;
     if (items.length === 0) {
         el.innerHTML = '<div class="empty-state"><i class="fas fa-comment-slash"></i><p>No community feedback yet.</p></div>';
         return;
@@ -338,19 +367,11 @@ function renderComments(items) {
     `).join('');
 }
 
-// ── Toggle comment approval ──
 window.toggleApprove = async function (id, approved) {
     if (!sb) return;
-    const { error } = await sb
-        .from('user_submissions')
-        .update({ metadata: { approved } })
-        .eq('id', id);
-
-    if (error) {
-        showToast('Could not update approval: ' + error.message, 'error');
-    } else {
-        showToast(approved ? 'Comment approved!' : 'Comment unapproved.', 'success');
-    }
+    const { error } = await sb.from('user_submissions').update({ metadata: { approved } }).eq('id', id);
+    if (error) showToast('Update failed: ' + error.message, 'error');
+    else showToast(approved ? 'Comment approved!' : 'Comment hidden.', 'success');
 };
 
 // ═══════════════════════════════════════════════════════
@@ -358,6 +379,20 @@ window.toggleApprove = async function (id, approved) {
 // ═══════════════════════════════════════════════════════
 
 if (cmsForm) {
+    const sectionSelect = document.getElementById('cms-section');
+    if (sectionSelect) {
+        sectionSelect.addEventListener('change', async (e) => {
+            const key = e.target.value;
+            if (key) {
+                await loadIntoEditor(key, false);
+                await loadContentGrid(key);
+                showToast(`Viewing: ${formatKey(key)}`, 'success');
+            } else {
+                await loadContentGrid();
+            }
+        });
+    }
+
     cmsForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const sectionKey = document.getElementById('cms-section').value;
@@ -369,10 +404,6 @@ if (cmsForm) {
             showToast('Please select a site section first.', 'error');
             return;
         }
-        if (!body.trim()) {
-            showToast('Body text cannot be empty.', 'error');
-            return;
-        }
 
         publishBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Publishing…';
         publishBtn.disabled = true;
@@ -380,11 +411,11 @@ if (cmsForm) {
         try {
             const { error } = await handleSiteUpdate(sectionKey, title, body, file);
             if (error) throw error;
-
             showToast(`"${formatKey(sectionKey)}" is now live!`, 'success');
-            cmsForm.reset();
+            // Don't reset everything, just clear file and refresh grid
+            fileInput.value = '';
             fileNameEl.textContent = '';
-            await loadContentGrid();
+            await loadContentGrid(sectionKey);
         } catch (err) {
             showToast('Publish failed: ' + err.message, 'error');
         } finally {
@@ -393,14 +424,15 @@ if (cmsForm) {
         }
     });
 
-    // File name preview
     fileInput.addEventListener('change', () => {
         fileNameEl.textContent = fileInput.files[0] ? fileInput.files[0].name : '';
     });
 
-    // CMS form reset clears file name
     cmsForm.addEventListener('reset', () => {
-        setTimeout(() => { fileNameEl.textContent = ''; }, 0);
+        setTimeout(() => {
+            fileNameEl.textContent = '';
+            loadContentGrid(); // Show all on reset
+        }, 0);
     });
 }
 
@@ -450,7 +482,7 @@ function showToast(message, type = 'success') {
     if (!toastEl) return;
     const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
     toastEl.className = `toast ${type}`;
-    toastEl.innerHTML = `<i class="fas ${icon}" style="color: ${type === 'success' ? 'var(--db-green)' : 'var(--db-red)'}"></i><span class="toast-msg">${message}</span>`;
+    toastEl.innerHTML = `<i class="fas ${icon}"></i><span class="toast-msg">${message}</span>`;
     toastEl.classList.add('show');
     setTimeout(() => toastEl.classList.remove('show'), 3500);
 }

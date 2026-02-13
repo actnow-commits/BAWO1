@@ -204,26 +204,50 @@ footer {
 }
 
 .footer-brand {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--white);
     padding: 2.5rem;
     border-radius: var(--border-radius);
-    aspect-ratio: 1 / 1;
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: center;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: none;
     text-align: center;
     max-width: 320px;
+    transition: var(--transition);
+}
+
+.footer-brand:hover {
+    background: #f0f4f8;
+    transform: translateY(-5px);
+}
+
+.footer-brand img {
+    height: 80px;
+    width: auto;
+    margin-bottom: 1.5rem;
 }
 
 .footer-brand h3 {
-    color: var(--accent-teal);
+    color: var(--primary-blue);
     margin-bottom: 1rem;
     font-size: 1.5rem;
 }
 
+.footer-logo-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+}
+
+.footer-logo-link:hover h3 {
+    color: var(--accent-teal);
+}
+
 .footer-brand p {
-    color: #cbccce;
+    color: #1a1a1a;
     margin-bottom: 0;
     font-size: 1rem;
     line-height: 1.4;
@@ -303,4 +327,16 @@ footer {
         grid-template-columns: 1fr;
         gap: 2rem;
     }
+}
+
+/* ── CMS Admin Editable ── */
+.cms-admin-editable {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.cms-admin-editable:hover {
+    outline: 2px dashed var(--accent-teal);
+    outline-offset: 4px;
+    background-color: rgba(0, 181, 181, 0.05);
 }

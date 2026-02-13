@@ -671,16 +671,46 @@
             background: var(--db-surface);
             border: 1px solid var(--db-border);
             border-radius: var(--db-radius);
-            padding: 1.25rem;
+            padding: 0;
+            overflow: hidden;
             transition: var(--db-transition);
             cursor: pointer;
             box-shadow: var(--db-shadow-sm);
+            display: flex;
+            flex-direction: column;
         }
 
         .content-card:hover {
-            box-shadow: var(--db-shadow);
+            box-shadow: var(--db-shadow-md);
             border-color: var(--db-accent);
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+        }
+
+        .cc-media-preview {
+            width: 100%;
+            height: 140px;
+            background: var(--db-bg);
+            border-bottom: 1px solid var(--db-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .cc-media-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cc-video-placeholder {
+            font-size: 2rem;
+            color: var(--db-text-muted);
+            opacity: 0.5;
+        }
+
+        .cc-info {
+            padding: 1.25rem;
         }
 
         .content-card h4 {
@@ -704,22 +734,10 @@
             font-size: 0.82rem;
             line-height: 1.5;
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-        }
-
-        .content-card .cc-media-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            margin-top: 0.65rem;
-            font-size: 0.72rem;
-            color: var(--db-accent-dark);
-            background: rgba(0, 181, 181, 0.08);
-            padding: 0.2rem 0.5rem;
-            border-radius: 50px;
-            font-weight: 600;
         }
 
         .info-banner {
@@ -881,15 +899,43 @@
                                 <label for="cms-section">Site Section</label>
                                 <select id="cms-section" required>
                                     <option value="">— Select Section —</option>
-                                    <option value="home_hero_title">Home — Hero Title</option>
-                                    <option value="home_hero_text">Home — Hero Text</option>
-                                    <option value="home_pillars">Home — Core Pillars</option>
-                                    <option value="about_mission">About — Mission</option>
-                                    <option value="about_story">About — Our Story</option>
-                                    <option value="about_leaders">About — Our Leaders</option>
-                                    <option value="projects_nembe">Projects — Nembe Outreach</option>
-                                    <option value="projects_egbuoma">Projects — Egbuoma Outreach</option>
-                                    <option value="projects_education">Projects — Educational Initiative</option>
+                                    <optgroup label="Home Page">
+                                        <option value="home_hero_bg">Home — Hero Background Image</option>
+                                        <option value="home_hero_title">Home — Hero Title</option>
+                                        <option value="home_hero_text">Home — Hero Text</option>
+                                        <option value="home_why_exist_title">Home — Why We Exist Title</option>
+                                        <option value="home_why_exist_text_1">Home — Why We Exist (Para 1)</option>
+                                        <option value="home_why_exist_text_2">Home — Why We Exist (Para 2)</option>
+                                        <option value="pillar_education">Home — Pillar: Education</option>
+                                        <option value="pillar_research">Home — Pillar: Research</option>
+                                        <option value="pillar_advocacy">Home — Pillar: Advocacy</option>
+                                        <option value="pillar_empowerment">Home — Pillar: Empowerment</option>
+                                    </optgroup>
+                                    <optgroup label="About Page">
+                                        <option value="about_origins_text">About — Our Origins Text</option>
+                                        <option value="about_origins_img">About — Our Origins Image</option>
+                                        <option value="mission_quote">About — Mission Quote</option>
+                                        <option value="leader_inara">About — Leader: Inara Omuso</option>
+                                        <option value="leader_inara_img">About — Leader: Inara (Image)</option>
+                                        <option value="leader_aye">About — Leader: Aye Omuso</option>
+                                        <option value="leader_aye_img">About — Leader: Aye (Image)</option>
+                                    </optgroup>
+                                    <optgroup label="Impact Page">
+                                        <option value="projects_egbuoma_title">Projects — Egbuoma Title</option>
+                                        <option value="projects_egbuoma_text">Projects — Egbuoma Text</option>
+                                        <option value="projects_egbuoma_img">Projects — Egbuoma Image</option>
+                                        <option value="projects_nembe_title">Projects — Nembe Title</option>
+                                        <option value="projects_nembe_text">Projects — Nembe Text</option>
+                                        <option value="projects_nembe_img">Projects — Nembe Image</option>
+                                    </optgroup>
+                                    <optgroup label="Gallery">
+                                        <option value="gallery_img_1">Gallery — Image 1</option>
+                                        <option value="gallery_img_2">Gallery — Image 2</option>
+                                        <option value="gallery_img_3">Gallery — Image 3</option>
+                                        <option value="gallery_img_4">Gallery — Image 4</option>
+                                        <option value="gallery_img_5">Gallery — Image 5</option>
+                                        <option value="gallery_img_6">Gallery — Image 6</option>
+                                    </optgroup>
                                 </select>
                             </div>
                             <div class="form-field">
@@ -953,7 +999,8 @@
             <div class="tab-panel" id="panel-signups">
                 <div class="feed-section">
                     <h3><i class="fas fa-user-plus" style="color: var(--db-blue);"></i> Newsletter & Volunteer Signups
-                        <span class="badge" id="signup-count">0</span></h3>
+                        <span class="badge" id="signup-count">0</span>
+                    </h3>
                     <div class="feed-list" id="signups-feed">
                         <div class="empty-state"><i class="fas fa-user-friends"></i>
                             <p>No signups yet. They'll appear here when someone fills out the form.</p>
