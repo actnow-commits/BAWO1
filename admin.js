@@ -151,15 +151,40 @@ async function handleSiteUpdate(sectionKey, title, text, file) {
         mediaUrl = data.publicUrl;
     }
 
-    // Build update object only with provided values to avoid overwriting existing data with blanks
+    // 1. Fetch existing content to handle partial updates properly
+    const { data: existing } = await sb
+        .from('site_content')
+        .select('*')
+        .eq('section_key', sectionKey)
+        .single();
+
+    // 2. Build update object
     const updateData = {
         section_key: sectionKey,
         updated_at: new Date().toISOString()
     };
 
-    if (title !== undefined && title !== null && title !== '') updateData.title = title;
-    if (text !== undefined && text !== null && text !== '') updateData.body_text = text;
-    if (mediaUrl) updateData.media_url = mediaUrl;
+    // Only set if provided, otherwise fallback to existing if it exists
+    if (title !== undefined && title !== null && title !== '') {
+        updateData.title = title;
+    } else if (existing) {
+        updateData.title = existing.title;
+    }
+
+    if (text !== undefined && text !== null && text !== '') {
+        updateData.body_text = text;
+    } else if (existing) {
+        updateData.body_text = existing.body_text;
+    } else {
+        // New record with no text provided - we must have something for NOT NULL constraint
+        updateData.body_text = '';
+    }
+
+    if (mediaUrl) {
+        updateData.media_url = mediaUrl;
+    } else if (existing) {
+        updateData.media_url = existing.media_url;
+    }
 
     const { error } = await sb
         .from('site_content')
