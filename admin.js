@@ -151,15 +151,19 @@ async function handleSiteUpdate(sectionKey, title, text, file) {
         mediaUrl = data.publicUrl;
     }
 
+    // Build update object only with provided values to avoid overwriting existing data with blanks
+    const updateData = {
+        section_key: sectionKey,
+        updated_at: new Date().toISOString()
+    };
+
+    if (title !== undefined && title !== null && title !== '') updateData.title = title;
+    if (text !== undefined && text !== null && text !== '') updateData.body_text = text;
+    if (mediaUrl) updateData.media_url = mediaUrl;
+
     const { error } = await sb
         .from('site_content')
-        .upsert({
-            section_key: sectionKey,
-            title: title,
-            body_text: text,
-            ...(mediaUrl && { media_url: mediaUrl }),
-            updated_at: new Date().toISOString()
-        }, { onConflict: 'section_key' });
+        .upsert(updateData, { onConflict: 'section_key' });
 
     return { error };
 }

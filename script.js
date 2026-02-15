@@ -131,15 +131,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 // ── Text elements: inject body text ──
-                if (bodyText) {
+                // Only inject if bodyText is present and the element isn't an IMG/VIDEO (which we already handled)
+                if (bodyText && el.tagName !== 'IMG' && el.tagName !== 'VIDEO') {
                     el.innerHTML = bodyText;
                 }
 
                 if (title) {
+                    // Look for title element (usually a peer or nearby element with data-cms-title)
                     const titleEl = el.closest('[data-cms-key]')?.parentElement?.querySelector(`[data-cms-title="${key}"]`)
                         || document.querySelector(`[data-cms-title="${key}"]`);
+
                     if (titleEl) {
                         titleEl.innerHTML = title;
+                    } else if (!bodyText && (el.tagName.startsWith('H') || el.tagName === 'P' || el.tagName === 'SPAN')) {
+                        // Fallback: if no dedicated title element exists AND no body text was provided, 
+                        // and this is a text element, treat the 'title' field as the main text content.
+                        el.innerHTML = title;
                     }
                 }
             });
