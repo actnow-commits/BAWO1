@@ -151,6 +151,64 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
+            // ── Dynamic Partners Grid ──
+            const partnersGrid = document.getElementById('partners-grid');
+            if (partnersGrid && data.length > 0) {
+                // Filter for partner keys (excluding header/list text)
+                const partnerItems = data.filter(item =>
+                    item.section_key &&
+                    item.section_key.startsWith('partner_') &&
+                    !item.section_key.startsWith('partners_header') &&
+                    !item.section_key.startsWith('partners_list')
+                );
+
+                if (partnerItems.length > 0) {
+                    // Sort items if needed, or just use as is
+                    const becomePartnerCard = `
+                        <div class="fade-in visible"
+                            style="background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed var(--accent-teal);">
+                            <i class="fas fa-hands-helping" style="font-size: 3rem; color: var(--accent-teal); margin-bottom: 1rem;"></i>
+                            <h3 style="margin-bottom: 0.75rem;">Become a Partner</h3>
+                            <p style="font-size: 0.9rem; color: #555; margin-bottom: 1.25rem; line-height: 1.6;">
+                                If you are interested in partnering with us, please contact us at:
+                            </p>
+                            <a href="mailto:contact@bawofoundation.org" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1.25rem;">
+                                <i class="fas fa-envelope" style="margin-right: 0.4rem;"></i>contact@bawofoundation.org
+                            </a>
+                        </div>
+                    `;
+
+                    partnersGrid.innerHTML = partnerItems.map(p => {
+                        const hasImage = p.media_url && !p.media_url.match(/\.(mp4|webm|ogg)$/i);
+                        return `
+                            <div class="fade-in visible"
+                                style="background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: space-between;">
+                                <div>
+                                    ${hasImage
+                                ? `<img src="${p.media_url}" style="height: 60px; margin-bottom: 1.5rem; object-fit: contain; max-width: 100%;">`
+                                : `<i class="fas fa-handshake" style="font-size: 3rem; color: var(--accent-teal); margin-bottom: 1rem;"></i>`}
+                                    <h3 ${isAdmin ? `data-cms-title="${p.section_key}" style="cursor:pointer;" title="Click to edit"` : ''}>${p.title || p.section_key}</h3>
+                                    <div style="font-size: 0.9rem; color: #555; margin-bottom: 1rem;" ${isAdmin ? `data-cms-key="${p.section_key}" style="cursor:pointer;" title="Click to edit"` : ''}>
+                                        ${p.body_text || ''}
+                                    </div>
+                                </div>
+                                ${isAdmin ? `<button onclick="window.location.href='dashboard.html?edit=${p.section_key}'" class="btn btn-secondary" style="font-size: 0.7rem; padding: 0.3rem 0.6rem; margin-top: 0.5rem; background: #f0f0f0; color: #666; border: 1px solid #ddd;">Edit Content</button>` : ''}
+                            </div>
+                        `;
+                    }).join('') + becomePartnerCard;
+
+                    // Re-attach admin click listeners if we just replaced the HTML
+                    if (isAdmin) {
+                        partnersGrid.querySelectorAll('[data-cms-key], [data-cms-title]').forEach(el => {
+                            el.addEventListener('click', (e) => {
+                                const key = el.getAttribute('data-cms-key') || el.getAttribute('data-cms-title');
+                                window.location.href = `dashboard.html?edit=${key}`;
+                            });
+                        });
+                    }
+                }
+            }
+
         } catch (error) {
             console.error('CMS Load Error:', error.message || error);
         }
