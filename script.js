@@ -176,8 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             <p style="font-size: 0.9rem; color: #555; margin-bottom: 1.25rem; line-height: 1.6;">
                                 If you are interested in partnering with us, please contact us at:
                             </p>
-                            <a href="mailto:contact@theoleague.org" class="btn btn-primary" style="font-size: 0.85rem; padding: 0.5rem 1.25rem; color: #000;">
-                                <i class="fas fa-envelope" style="margin-right: 0.4rem;"></i>contact@theoleague.org
+                            <a href="mailto:contact@thebawofoundation.org" class="btn btn-primary" style="font-size: 0.85rem; padding: 0.5rem 1.25rem; color: #000;">
+                                <i class="fas fa-envelope" style="margin-right: 0.4rem;"></i>contact@thebawofoundation.org
                             </a>
                         </div>
                     `;
