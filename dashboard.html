@@ -518,6 +518,40 @@
             gap: 0.6rem;
         }
 
+        /* ── Delete Button ── */
+        .cc-delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.1);
+            color: #EF4444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            opacity: 0;
+            z-index: 5;
+        }
+
+        .content-card:hover .cc-delete-btn {
+            opacity: 1;
+        }
+
+        .cc-delete-btn:hover {
+            background: #EF4444;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .content-card {
+            position: relative;
+        }
+
         .feed-item {
             background: var(--db-surface);
             border: 1px solid var(--db-border);
@@ -945,7 +979,12 @@
                                         <option value="home_why_exist_text_2">Home — Why We Exist (Para 2)</option>
                                         <option value="home_pillars_title">Home — Pillars Title</option>
                                         <option value="home_pillars_text">Home — Pillars Description</option>
+                                        <option value="pillar_education">Home — Pillar: Education</option>
+                                        <option value="pillar_research">Home — Pillar: Research</option>
+                                        <option value="pillar_advocacy">Home — Pillar: Advocacy</option>
+                                        <option value="pillar_empowerment">Home — Pillar: Empowerment</option>
                                         <option value="home_signup_title">Home — Sign Up Title</option>
+                                        <option value="home_signup_text">Home — Sign Up Text</option>
                                     </optgroup>
                                     <optgroup label="About Page">
                                         <option value="about_header_title">About — Header Title</option>
@@ -961,6 +1000,7 @@
                                     </optgroup>
                                     <optgroup label="Impact Page">
                                         <option value="projects_header_title">Impact — Header Title</option>
+                                        <option value="projects_header_text">Impact — Header Text</option>
                                         <option value="projects_egbuoma_title">Impact — Egbuoma Project</option>
                                         <option value="projects_egbuoma_text">Impact — Egbuoma Text</option>
                                         <option value="projects_egbuoma_img">Impact — Egbuoma Image</option>
@@ -968,7 +1008,9 @@
                                         <option value="projects_nembe_text">Impact — Nembe Text</option>
                                         <option value="projects_nembe_img">Impact — Nembe Image</option>
                                         <option value="projects_edu_title">Impact — Educational Title</option>
+                                        <option value="projects_edu_text">Impact — Educational Text</option>
                                         <option value="projects_gallery_title">Impact — Gallery Title</option>
+                                        <option value="projects_gallery_text">Impact — Gallery Description</option>
                                     </optgroup>
                                     <optgroup label="Gallery">
                                         <option value="gallery_img_1">Gallery — Image 1</option>
@@ -977,15 +1019,23 @@
                                         <option value="gallery_img_4">Gallery — Image 4</option>
                                         <option value="gallery_img_5">Gallery — Image 5</option>
                                         <option value="gallery_img_6">Gallery — Image 6</option>
+                                        <option value="gallery_img_7">Gallery — Image 7</option>
+                                        <option value="gallery_img_8">Gallery — Image 8</option>
+                                        <option value="gallery_img_9">Gallery — Image 9</option>
+                                        <option value="gallery_img_10">Gallery — Image 10</option>
                                     </optgroup>
                                     <optgroup label="Partners & Donate">
                                         <option value="partners_header_title">Partners — Header Title</option>
+                                        <option value="partners_header_text">Partners — Header Text</option>
                                         <option value="partners_list_title">Partners — List Title</option>
+                                        <option value="partners_list_text">Partners — List Text</option>
                                         <option value="partner_nembe">Partners — Nembe Ibe USA</option>
                                         <option value="partner_egbuoma">Partners — Egbuoma Health</option>
                                         <option value="partner_opportunity">Partners — Opportunity League</option>
                                         <option value="donate_hero_title">Donate — Header Title</option>
+                                        <option value="donate_hero_text">Donate — Header Description</option>
                                         <option value="donate_form_title">Donate — Form Title</option>
+                                        <option value="donate_form_text">Donate — Form Description</option>
                                         <option value="donate_others_title">Donate — Alternatives Title</option>
                                         <option value="donate_way_share">Donate — Spread Word</option>
                                         <option value="donate_way_partner">Donate — Partner Way</option>
@@ -1021,10 +1071,17 @@
                 </div>
 
                 <!-- Existing Content -->
-                <h3
-                    style="margin-top: 2rem; color: var(--db-primary); display: flex; align-items: center; gap: 0.6rem; font-size: 1.05rem;">
-                    <i class="fas fa-layer-group" style="color: var(--db-accent);"></i> Published Content
-                </h3>
+                <div
+                    style="margin-top: 2rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                    <h3
+                        style="color: var(--db-primary); display: flex; align-items: center; gap: 0.6rem; font-size: 1.05rem; margin: 0;">
+                        <i class="fas fa-layer-group" style="color: var(--db-accent);"></i> Published Content
+                    </h3>
+                    <button id="add-partner-btn" class="btn-dash btn-outline"
+                        style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">
+                        <i class="fas fa-plus"></i> Add New Partner
+                    </button>
+                </div>
                 <div class="content-grid" id="content-grid">
                     <div class="empty-state"><i class="fas fa-inbox"></i>
                         <p>No content published yet.</p>

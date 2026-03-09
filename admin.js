@@ -152,15 +152,17 @@ async function handleSiteUpdate(sectionKey, title, text, file) {
     }
 
     // 1. Fetch existing content to handle partial updates properly
+    // Use maybeSingle to avoid errors if the row doesn't exist yet
     const { data: existing } = await sb
         .from('site_content')
         .select('*')
         .eq('section_key', sectionKey)
-        .single();
+        .maybeSingle();
 
     // 2. Build update object
     const updateData = {
         section_key: sectionKey,
+        published: true, // Ensure it's active
         updated_at: new Date().toISOString()
     };
 
@@ -176,7 +178,6 @@ async function handleSiteUpdate(sectionKey, title, text, file) {
     } else if (existing) {
         updateData.body_text = existing.body_text;
     } else {
-        // New record with no text provided - we must have something for NOT NULL constraint
         updateData.body_text = '';
     }
 
@@ -270,6 +271,9 @@ async function loadContentGrid(filterKey = null) {
 
     contentGrid.innerHTML = (filterKey ? '<div style="grid-column: 1/-1; display:flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;"><small style="color:var(--db-accent); font-weight:700;">FILTERED VIEW</small> <button class="btn-dash btn-outline" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="loadContentGrid()">Show All</button></div>' : '') + data.map(item => `
         <div class="content-card ${filterKey === item.section_key ? 'highlighted' : ''}" onclick="loadIntoEditor('${item.section_key}')">
+            <button class="cc-delete-btn" title="Delete this section" onclick="event.stopPropagation(); deleteContent('${item.section_key}')">
+                <i class="fas fa-trash"></i>
+            </button>
             ${item.media_url ? `
                 <div class="cc-media-preview">
                     ${item.media_url.match(/\.(mp4|webm|ogg)$/i)
@@ -286,9 +290,43 @@ async function loadContentGrid(filterKey = null) {
     `).join('');
 }
 
+// ── Delete item ──
+window.deleteContent = async function (sectionKey) {
+    if (!sb) return;
+    if (!confirm(`Are you sure you want to delete the "${formatKey(sectionKey)}" section? This cannot be undone.`)) return;
+
+    try {
+        const { error } = await sb.from('site_content').delete().eq('section_key', sectionKey);
+        if (error) throw error;
+
+        showToast(`"${formatKey(sectionKey)}" deleted successfully.`, 'success');
+        await loadContentGrid();
+    } catch (err) {
+        console.error('Delete error:', err);
+        showToast('Delete failed: ' + err.message, 'error');
+    }
+};
+
 // ── Load item into CMS editor ──
 window.loadIntoEditor = async function (sectionKey, shouldScroll = true) {
     if (!sb) return;
+
+    // Ensure the key exists in the dropdown (important for custom/dynamic keys)
+    const sectionSelect = document.getElementById('cms-section');
+    if (sectionKey && sectionSelect && !Array.from(sectionSelect.options).some(o => o.value === sectionKey)) {
+        const option = document.createElement('option');
+        option.value = sectionKey;
+        option.textContent = formatKey(sectionKey);
+
+        // Try to add to Partners group if it looks like a partner
+        const optGroup = sectionSelect.querySelector('optgroup[label="Partners & Donate"]');
+        if (sectionKey.startsWith('partner_') && optGroup) {
+            optGroup.appendChild(option);
+        } else {
+            sectionSelect.appendChild(option);
+        }
+    }
+
     const { data } = await sb.from('site_content').select('*').eq('section_key', sectionKey).single();
     if (data) {
         document.getElementById('cms-section').value = data.section_key;
@@ -301,7 +339,7 @@ window.loadIntoEditor = async function (sectionKey, shouldScroll = true) {
         }
     } else {
         // Clear if not found (new section selected or not in DB)
-        document.getElementById('cms-section').value = sectionKey;
+        if (sectionSelect) sectionSelect.value = sectionKey;
         document.getElementById('cms-title').value = '';
         document.getElementById('cms-body').value = '';
         fileNameEl.textContent = '';
@@ -439,14 +477,18 @@ if (cmsForm) {
 
         try {
             const { error } = await handleSiteUpdate(sectionKey, title, body, file);
-            if (error) throw error;
+            if (error) {
+                console.error('CMS Update Error Object:', error);
+                throw error;
+            }
             showToast(`"${formatKey(sectionKey)}" is now live!`, 'success');
             // Don't reset everything, just clear file and refresh grid
             fileInput.value = '';
             fileNameEl.textContent = '';
             await loadContentGrid(sectionKey);
         } catch (err) {
-            showToast('Publish failed: ' + err.message, 'error');
+            console.error('CMS Publish Catch:', err);
+            showToast('Publish failed: ' + (err.message || 'Row Level Security violation'), 'error');
         } finally {
             publishBtn.innerHTML = '<i class="fas fa-rocket"></i> Publish';
             publishBtn.disabled = false;
@@ -463,6 +505,40 @@ if (cmsForm) {
             loadContentGrid(); // Show all on reset
         }, 0);
     });
+
+    // ── Add New Partner Logic ──
+    const addPartnerBtn = document.getElementById('add-partner-btn');
+    if (addPartnerBtn) {
+        addPartnerBtn.addEventListener('click', () => {
+            const partnerId = 'partner_' + Math.random().toString(36).substring(2, 9);
+
+            // Set values in editor
+            const sectionSelect = document.getElementById('cms-section');
+
+            // Check if we need to add a new option to the dropdown or just use a custom input
+            // For now, let's just use the sectionKey directly in the editor
+            document.getElementById('cms-section').value = ''; // Clear selection
+
+            // We'll allow "custom" keys by adding an option dynamically if it doesn't exist
+            let option = Array.from(sectionSelect.options).find(o => o.value === partnerId);
+            if (!option) {
+                const optGroup = sectionSelect.querySelector('optgroup[label="Partners & Donate"]');
+                option = document.createElement('option');
+                option.value = partnerId;
+                option.textContent = `New Partner (${partnerId})`;
+                if (optGroup) optGroup.appendChild(option);
+                else sectionSelect.appendChild(option);
+            }
+
+            sectionSelect.value = partnerId;
+            document.getElementById('cms-title').value = 'New Partner Name';
+            document.getElementById('cms-body').value = 'Description of the new partner...';
+            fileNameEl.textContent = '';
+
+            document.querySelector('.cms-editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            showToast('Ready to add new partner. Press Publish when done.', 'success');
+        });
+    }
 }
 
 // ═══════════════════════════════════════════════════════
