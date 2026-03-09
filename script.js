@@ -162,7 +162,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     !item.section_key.startsWith('partners_list')
                 );
 
-                if (partnerItems.length > 0) {
+                // Only override the static HTML if every partner item has a proper title.
+                // This prevents half-populated DB rows from wiping out the static fallback.
+                const fullyPopulated = partnerItems.every(item => item.title && item.title.trim() !== '' && item.title !== item.section_key);
+
+                if (partnerItems.length > 0 && fullyPopulated) {
                     // Sort items if needed, or just use as is
                     const becomePartnerCard = `
                         <div class="fade-in visible"
