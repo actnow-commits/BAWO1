@@ -162,29 +162,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     !item.section_key.startsWith('partners_list')
                 );
 
-                // Only override the static HTML if every partner item has a proper title.
-                // This prevents half-populated DB rows from wiping out the static fallback.
-                const fullyPopulated = partnerItems.every(item => item.title && item.title.trim() !== '' && item.title !== item.section_key);
+                // Find static partner keys already on the page (like partner_nembe, partner_egbuoma)
+                const existingStaticKeys = Array.from(partnersGrid.querySelectorAll('[data-cms-key]'))
+                    .map(el => el.getAttribute('data-cms-key'));
 
-                if (partnerItems.length > 0 && fullyPopulated) {
-                    // Sort items if needed, or just use as is
-                    const becomePartnerCard = `
-                        <div class="fade-in visible"
-                            style="background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: space-between; border: 2px dashed var(--accent-teal);">
-                            <div>
-                                <i class="fas fa-hands-helping" style="font-size: 3rem; color: var(--accent-teal); margin-bottom: 1rem;"></i>
-                                <h3 style="margin-bottom: 0.75rem;">Become a Partner</h3>
-                                <p style="font-size: 0.9rem; color: #555; margin-bottom: 1.25rem; line-height: 1.6;">
-                                    If you are interested in partnering with us, please contact us at:
-                                </p>
-                            </div>
-                            <a href="mailto:contact@bawofoundation.org?subject=Interest%20in%20Becoming%20a%20Partner" class="btn btn-primary" style="font-size: 0.85rem; padding: 0.5rem 1.25rem; color: #000;">
-                                <i class="fas fa-envelope" style="margin-right: 0.4rem;"></i>contact@bawofoundation.org
-                            </a>
-                        </div>
-                    `;
+                // New partners are those in DB that aren't already hardcoded, AND have a real title
+                const newPartners = partnerItems.filter(item =>
+                    !existingStaticKeys.includes(item.section_key) &&
+                    item.title && item.title.trim() !== '' && item.title !== item.section_key
+                );
 
-                    partnersGrid.innerHTML = partnerItems.map(p => {
+                if (newPartners.length > 0) {
+                    const newCardsHtml = newPartners.map(p => {
                         const hasImage = p.media_url && !p.media_url.match(/\.(mp4|webm|ogg)$/i);
                         return `
                             <div class="fade-in visible"
@@ -201,13 +190,26 @@ document.addEventListener('DOMContentLoaded', () => {
                                 ${isAdmin ? `<button onclick="window.location.href='dashboard.html?edit=${p.section_key}'" class="btn btn-secondary" style="font-size: 0.7rem; padding: 0.3rem 0.6rem; margin-top: 0.5rem; background: #f0f0f0; color: #666; border: 1px solid #ddd;">Edit Content</button>` : ''}
                             </div>
                         `;
-                    }).join('') + becomePartnerCard;
+                    }).join('');
 
-                    // Re-attach admin click listeners if we just replaced the HTML
+                    // Insert the new cards right before the last card ("Become a Partner" CTA)
+                    const becomePartnerCardEl = partnersGrid.lastElementChild;
+                    if (becomePartnerCardEl) {
+                        becomePartnerCardEl.insertAdjacentHTML('beforebegin', newCardsHtml);
+                    } else {
+                        partnersGrid.innerHTML += newCardsHtml;
+                    }
+
+                    // Re-attach admin click listeners for newly added cards
                     if (isAdmin) {
                         partnersGrid.querySelectorAll('[data-cms-key], [data-cms-title]').forEach(el => {
-                            el.addEventListener('click', (e) => {
-                                const key = el.getAttribute('data-cms-key') || el.getAttribute('data-cms-title');
+                            // Clone trick to remove old listeners just in case
+                            const newEl = el.cloneNode(true);
+                            if (el.parentNode) {
+                                el.parentNode.replaceChild(newEl, el);
+                            }
+                            newEl.addEventListener('click', (e) => {
+                                const key = newEl.getAttribute('data-cms-key') || newEl.getAttribute('data-cms-title');
                                 window.location.href = `dashboard.html?edit=${key}`;
                             });
                         });
