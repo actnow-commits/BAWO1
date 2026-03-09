@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     If you are interested in partnering with us, please contact us at:
                                 </p>
                             </div>
-                            <a href="mailto:contact@bawofoundation.org" class="btn btn-primary" style="font-size: 0.85rem; padding: 0.5rem 1.25rem; color: #000;">
+                            <a href="mailto:contact@bawofoundation.org?subject=Interest%20in%20Becoming%20a%20Partner" class="btn btn-primary" style="font-size: 0.85rem; padding: 0.5rem 1.25rem; color: #000;">
                                 <i class="fas fa-envelope" style="margin-right: 0.4rem;"></i>contact@bawofoundation.org
                             </a>
                         </div>
