@@ -134,6 +134,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Only inject if bodyText is present and the element isn't an IMG/VIDEO (which we already handled)
                 if (bodyText && el.tagName !== 'IMG' && el.tagName !== 'VIDEO') {
                     el.innerHTML = bodyText;
+
+                    // Handle mailto links: sync href with text
+                    if (el.tagName === 'A' && el.href.startsWith('mailto:')) {
+                        const cleanEmail = bodyText.replace(/<[^>]*>?/gm, '').trim();
+                        el.href = 'mailto:' + cleanEmail;
+                    }
                 }
 
                 if (title) {

@@ -146,6 +146,7 @@ add_bullet("Our Impact — project titles, descriptions, outreach images")
 add_bullet("Gallery — up to 10 gallery images")
 add_bullet("Partners & Giving — partner names, descriptions, logos")
 add_bullet("Donate page — header text and giving options copy")
+add_bullet("Footer — tagline, email, and copyright")
 
 add_divider()
 
