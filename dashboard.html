@@ -1027,6 +1027,34 @@
                                         <option value="gallery_img_9">Gallery — Image 9</option>
                                         <option value="gallery_img_10">Gallery — Image 10</option>
                                     </optgroup>
+                                    <optgroup label="Impact Gallery (Community)">
+                                        <option value="impact_gallery_title">Impact — Gallery Title</option>
+                                        <option value="impact_gallery_text">Impact — Gallery Description</option>
+                                        <option value="impact_img_1">Impact — Slider Image 1</option>
+                                        <option value="impact_img_2">Impact — Slider Image 2</option>
+                                        <option value="impact_img_3">Impact — Slider Image 3</option>
+                                        <option value="impact_img_4">Impact — Slider Image 4</option>
+                                    </optgroup>
+                                    <optgroup label="Hospital Gallery">
+                                        <option value="hospital_gallery_title">Hospital — Gallery Title</option>
+                                        <option value="hospital_gallery_text">Hospital — Gallery Description</option>
+                                        <option value="hospital_img_1">Hospital — Image 1</option>
+                                        <option value="hospital_img_2">Hospital — Image 2</option>
+                                        <option value="hospital_img_3">Hospital — Image 3</option>
+                                        <option value="hospital_img_4">Hospital — Image 4</option>
+                                        <option value="hospital_img_5">Hospital — Image 5</option>
+                                        <option value="hospital_img_6">Hospital — Image 6</option>
+                                        <option value="hospital_img_7">Hospital — Image 7</option>
+                                    </optgroup>
+                                    <optgroup label="Other Galleries">
+                                        <option value="edu_gallery_title">Education — Gallery Title</option>
+                                        <option value="edu_gallery_text">Education — Gallery Description</option>
+                                        <option value="edu_img_1">Education — Image 1</option>
+                                        <option value="edu_img_2">Education — Image 2</option>
+                                        <option value="random_gallery_title">Random — Gallery Title</option>
+                                        <option value="random_gallery_text">Random — Gallery Description</option>
+                                        <option value="random_img_1">Random — Image 1</option>
+                                    </optgroup>
                                     <optgroup label="Footer">
                                         <option value="footer_tagline">Footer — Tagline</option>
                                         <option value="footer_email">Footer — Contact Email</option>
@@ -1055,8 +1083,20 @@
                                 <label for="cms-title">Title</label>
                                 <input type="text" id="cms-title" placeholder="Section heading (optional)">
                             </div>
-                            <div class="form-field full">
-                                <label for="cms-body">Body Text</label>
+                            <div class="form-field full" id="date-field-group" style="display: none; background: var(--db-blue-bg); padding: 1rem; border-radius: var(--db-radius-sm); border: 1px solid #DBEAFE; margin-bottom: 1rem;">
+                                <label for="cms-date" style="color: var(--db-blue); display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-calendar-alt"></i> Date / Status Text
+                                </label>
+                                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                                    <input type="text" id="cms-date" placeholder="e.g. COMPLETED - SEPT 2025" style="flex: 1; background: white;">
+                                    <input type="date" id="date-picker-helper" style="width: 45px; padding: 0.4rem; cursor: pointer; background: white;" title="Use date picker to help format">
+                                </div>
+                                <small style="color: var(--db-text-muted); margin-top: 0.5rem; display: block;">
+                                    This field updates the <strong>Status Badge</strong> (e.g. "COMPLETED - SEPT 2025"). You can type manually or use the calendar icon.
+                                </small>
+                            </div>
+                            <div class="form-field full" id="body-field-group">
+                                <label for="cms-body" id="cms-body-label">Body Text</label>
                                 <textarea id="cms-body" rows="5" placeholder="Enter your content here…"></textarea>
                             </div>
                             <div class="form-field full">

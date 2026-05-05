@@ -140,7 +140,8 @@ async function handleSiteUpdate(sectionKey, title, text, file) {
     let mediaUrl = null;
 
     if (file) {
-        const fileName = `${sectionKey}-${Date.now()}`;
+        const extension = file.name.split('.').pop();
+        const fileName = `${sectionKey}-${Date.now()}.${extension}`;
         const { data: uploadData, error: uploadErr } = await sb.storage
             .from('site-media')
             .upload(fileName, file);
@@ -311,6 +312,22 @@ window.deleteContent = async function (sectionKey) {
 window.loadIntoEditor = async function (sectionKey, shouldScroll = true) {
     if (!sb) return;
 
+    // UI Toggle for Date/Status fields
+    const isDate = sectionKey && sectionKey.includes('_date');
+    const dateGroup = document.getElementById('date-field-group');
+    const bodyGroup = document.getElementById('body-field-group');
+    const titleField = document.getElementById('cms-title')?.parentElement;
+
+    if (isDate) {
+        if (dateGroup) dateGroup.style.display = 'block';
+        if (bodyGroup) bodyGroup.style.display = 'none';
+        if (titleField) titleField.style.display = 'none';
+    } else {
+        if (dateGroup) dateGroup.style.display = 'none';
+        if (bodyGroup) bodyGroup.style.display = 'block';
+        if (titleField) titleField.style.display = 'block';
+    }
+
     // Ensure the key exists in the dropdown (important for custom/dynamic keys)
     const sectionSelect = document.getElementById('cms-section');
     if (sectionKey && sectionSelect && !Array.from(sectionSelect.options).some(o => o.value === sectionKey)) {
@@ -332,6 +349,9 @@ window.loadIntoEditor = async function (sectionKey, shouldScroll = true) {
         document.getElementById('cms-section').value = data.section_key;
         document.getElementById('cms-title').value = data.title || '';
         document.getElementById('cms-body').value = data.body_text || data.value || '';
+        if (isDate && document.getElementById('cms-date')) {
+            document.getElementById('cms-date').value = data.body_text || data.value || '';
+        }
         fileNameEl.textContent = data.media_url ? 'Current media attached' : '';
 
         if (shouldScroll) {
@@ -342,6 +362,7 @@ window.loadIntoEditor = async function (sectionKey, shouldScroll = true) {
         if (sectionSelect) sectionSelect.value = sectionKey;
         document.getElementById('cms-title').value = '';
         document.getElementById('cms-body').value = '';
+        if (document.getElementById('cms-date')) document.getElementById('cms-date').value = '';
         fileNameEl.textContent = '';
     }
 };
@@ -464,8 +485,14 @@ if (cmsForm) {
         e.preventDefault();
         const sectionKey = document.getElementById('cms-section').value;
         const title = document.getElementById('cms-title').value;
-        const body = document.getElementById('cms-body').value;
+        let body = document.getElementById('cms-body').value;
         const file = fileInput.files[0];
+
+        // Override body if date field is visible
+        const dateInput = document.getElementById('cms-date');
+        if (dateInput && sectionKey.includes('_date')) {
+            body = dateInput.value;
+        }
 
         if (!sectionKey) {
             showToast('Please select a site section first.', 'error');
@@ -502,9 +529,31 @@ if (cmsForm) {
     cmsForm.addEventListener('reset', () => {
         setTimeout(() => {
             fileNameEl.textContent = '';
+            const dateGroup = document.getElementById('date-field-group');
+            const bodyGroup = document.getElementById('body-field-group');
+            const titleField = document.getElementById('cms-title')?.parentElement;
+            if (dateGroup) dateGroup.style.display = 'none';
+            if (bodyGroup) bodyGroup.style.display = 'block';
+            if (titleField) titleField.style.display = 'block';
             loadContentGrid(); // Show all on reset
         }, 0);
     });
+
+    // ── Date Picker Helper ──
+    const datePickerHelper = document.getElementById('date-picker-helper');
+    if (datePickerHelper) {
+        datePickerHelper.addEventListener('change', (e) => {
+            if (!e.target.value) return;
+            const date = new Date(e.target.value);
+            const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+            const formatted = `COMPLETED - ${months[date.getMonth()]} ${date.getFullYear()}`;
+            const dateInput = document.getElementById('cms-date');
+            if (dateInput) {
+                dateInput.value = formatted;
+                dateInput.focus();
+            }
+        });
+    }
 
     // ── Add New Partner Logic ──
     const addPartnerBtn = document.getElementById('add-partner-btn');
